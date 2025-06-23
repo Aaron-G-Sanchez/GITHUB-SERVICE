@@ -1,6 +1,8 @@
 import { ObjectId } from 'mongodb'
 
 export interface Repository {
-  name: string
   id?: ObjectId
+  gh_id: number
+  name: string
+  has_issues: boolean
 }

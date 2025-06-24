@@ -1,27 +1,5 @@
-import {
-  GITHUB_USER_URL,
-  REQUEST_HEADERS,
-  NEXT_PATTERN_REG
-} from '../../lib/constants.lib'
+import { REQUEST_HEADERS, NEXT_PATTERN_REG } from '../../lib/constants.lib'
 import { Repository } from '../../models/Repository'
-
-/**
- * Calls the GitHub API and returns the total number of repositories for an authorized user.
- *
- * @returns [Promise<number>] The total repo count of an authorized user.
- */
-export const FetchUserRepoCount = async (): Promise<number> => {
-  const response = await fetchUtil(GITHUB_USER_URL)
-
-  const repoCount = await response.json().then((data: any) => {
-    const publicRepos = data.public_repos
-    const privateRepos = data.total_private_repos
-
-    return publicRepos + privateRepos
-  })
-
-  return repoCount
-}
 
 // TODO: Implement function.
 // TODO: Utilize the Link headers that comes from the API response.

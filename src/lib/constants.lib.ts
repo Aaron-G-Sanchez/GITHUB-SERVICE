@@ -12,9 +12,6 @@ export const REQUEST_HEADERS = {
   Authorization: `Bearer ${TOKEN}`
 }
 
-/** URL to fetch an authorized users info. */
-export const GITHUB_USER_URL = 'https://api.github.com/user'
-
 /** URL to fetch all of an authorized users repositories. */
 export const GITHUB_USER_REPOS_URL =
   'https://api.github.com/user/repos?affiliation=owner&per_page=100'

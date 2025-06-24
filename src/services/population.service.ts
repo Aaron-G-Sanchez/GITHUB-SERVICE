@@ -16,9 +16,7 @@ const headers = {
 }
 
 const sampleFetch = async () => {
-  // TODO: Get a count of all repos owned by user -
-  // Will be used to fetch all necessary pages of repos.
-
+  // TODO: Replace with function to use the [Link] header
   const serviceCalls = await CalculateServiceCalls()
 
   console.log(serviceCalls)

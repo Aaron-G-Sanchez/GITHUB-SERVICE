@@ -15,9 +15,9 @@ const headers = {
 }
 
 /**
- * Calls the GitHub API and returns the total number of repositories for a given user.
+ * Calls the GitHub API and returns the total number of repositories for an authorized user.
  *
- * @returns Promise<number>
+ * @returns [Promise<number>] The total repo count of an authorized user.
  */
 export const FetchUserRepoCount = async (): Promise<number> => {
   const response = await fetchUtil(GITHUB_USER_URL)
@@ -33,6 +33,7 @@ export const FetchUserRepoCount = async (): Promise<number> => {
 }
 
 // TODO: Implement function.
+// TODO: Utilize the Link headers that comes from the API response.
 export const FetchUserRepos = () => {}
 
 /**

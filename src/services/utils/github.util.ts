@@ -1,18 +1,9 @@
-import dotenv from 'dotenv'
-
-import { GITHUB_USER_URL } from '../../lib/urls.lib'
-
-dotenv.config()
-
-const TOKEN = process.env.GH_TOKEN
-
-if (!TOKEN) throw new Error('No GitHub User Token found.')
-
-const headers = {
-  'User-Agent': 'aaron-g-sanchez',
-  'X-GitHub-Api-Version': '2022-11-28',
-  Authorization: `Bearer ${TOKEN}`
-}
+import {
+  GITHUB_USER_URL,
+  REQUEST_HEADERS,
+  NEXT_PATTERN_REG
+} from '../../lib/constants.lib'
+import { Repository } from '../../models/Repository'
 
 /**
  * Calls the GitHub API and returns the total number of repositories for an authorized user.
@@ -34,15 +25,65 @@ export const FetchUserRepoCount = async (): Promise<number> => {
 
 // TODO: Implement function.
 // TODO: Utilize the Link headers that comes from the API response.
-export const FetchUserRepos = () => {}
+export const FetchUserRepos = async (
+  endpoint: string
+): Promise<Repository[]> => {
+  let pagesRemaining = true
+  let repositoryData: Repository[] = []
+
+  while (pagesRemaining) {
+    const res = await fetchUtil(endpoint)
+
+    const parsedData = await parseResponseData(res)
+
+    repositoryData = [...repositoryData, ...parsedData]
+
+    const linkHeaders = res.headers.get('link')
+
+    pagesRemaining =
+      linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
+
+    if (pagesRemaining) {
+      endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
+    }
+  }
+
+  return repositoryData
+}
 
 /**
- * Fetch utility function
+ * Fetch utility function.
  *
- * @param [string] a github API endpoint
+ * @param [string] a github API endpoint.
  * @returns
  */
 const fetchUtil = async (endpoint: string): Promise<Response> => {
-  const response = await fetch(endpoint, { headers })
+  const response = await fetch(endpoint, { headers: REQUEST_HEADERS })
   return response
+}
+
+/**
+ *
+ * @param [responseData] Fetch API Response.
+ * @returns Promise<Repository> - Array of Repositories.
+ */
+const parseResponseData = async (
+  responseData: Response
+): Promise<Repository[]> => {
+  const data = await responseData.json()
+
+  // Parse necessary data from response.
+  const repositories: Repository[] = data.map((repo: any) => ({
+    gh_id: repo.id,
+    name: repo.name,
+    full_name: repo.full_name,
+    html_url: repo.html_url,
+    fork: repo.fork,
+    url: repo.url,
+    created_at: repo.created_at,
+    open_issues_count: repo.open_issues_count,
+    has_issues: repo.has_issues
+  }))
+
+  return repositories
 }

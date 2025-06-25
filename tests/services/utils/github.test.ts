@@ -1,4 +1,12 @@
-import { expect, test, describe, mock, beforeEach, afterEach } from 'bun:test'
+import {
+  expect,
+  test,
+  describe,
+  mock,
+  afterEach,
+  beforeAll,
+  afterAll
+} from 'bun:test'
 
 import { fetchUtil } from '../../../src/services/utils/github.util'
 
@@ -23,24 +31,28 @@ const TEST_RESPONSE_DATA = {
 
 const MOCK_FETCH = mock(() => Promise.resolve(TEST_RESPONSE_DATA))
 
-beforeEach(() => {
-  mock.restore()
-})
-
-afterEach(() => {
-  global.fetch = ORIGINAL_FETCH
-})
-
 describe('fetchUtil', () => {
-  global.fetch = MOCK_FETCH as unknown as typeof fetch
-
-  test('should call fetch api and return proper data', async () => {
-    const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
-
-    expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
-    expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
-    expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
+  beforeAll(() => {
+    mock.restore()
+    console.log('hello from beforeEach.')
   })
 
-  // TODO: Write out individual tests for what should be done within the
+  afterAll(() => {
+    global.fetch = ORIGINAL_FETCH
+  })
+
+  global.fetch = MOCK_FETCH as unknown as typeof fetch
+
+  describe('when called', async () => {
+    const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+
+    test('should be called with proper data', () => {
+      expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
+      expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
+    })
+
+    test('should return a Response object', async () => {
+      expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
+    })
+  })
 })

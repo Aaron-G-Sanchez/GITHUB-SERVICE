@@ -31,7 +31,7 @@ const TEST_RESPONSE_DATA = {
 
 const MOCK_FETCH = mock(() => Promise.resolve(TEST_RESPONSE_DATA))
 
-describe('fetchUtil', () => {
+describe('fetchUtil', async () => {
   beforeAll(() => {
     mock.restore()
     console.log('hello from beforeEach.')
@@ -43,16 +43,14 @@ describe('fetchUtil', () => {
 
   global.fetch = MOCK_FETCH as unknown as typeof fetch
 
-  describe('when called', async () => {
-    const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+  const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
 
-    test('should be called with proper data', () => {
-      expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
-      expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
-    })
+  test('should be called with proper data', () => {
+    expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
+    expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
+  })
 
-    test('should return a Response object', async () => {
-      expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
-    })
+  test('should return a Response object', async () => {
+    expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
   })
 })

@@ -32,20 +32,30 @@ export const FetchUserRepos = async (
 /**
  * Fetch utility function.
  *
- * @param [string] a github API endpoint.
- * @returns
+ * @param endpoint a github API endpoint.
+ * @param options optional object to override headers for testing.
+ * @returns fetch API Response object
  */
-const fetchUtil = async (endpoint: string): Promise<Response> => {
-  const response = await fetch(endpoint, { headers: REQUEST_HEADERS })
+export const fetchUtil = async (
+  endpoint: string,
+  options?: RequestInit
+): Promise<Response> => {
+  const response = await fetch(endpoint, {
+    headers: {
+      ...REQUEST_HEADERS,
+      ...options?.headers
+    }
+  })
   return response
 }
 
 /**
+ * Util to parse GitHub API response data for the /repos endpoint.
  *
  * @param [responseData] Fetch API Response.
  * @returns Promise<Repository> - Array of Repositories.
  */
-const parseResponseData = async (
+export const parseResponseData = async (
   responseData: Response
 ): Promise<Repository[]> => {
   const data = await responseData.json()

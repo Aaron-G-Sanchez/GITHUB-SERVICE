@@ -1,12 +1,19 @@
-import { expect, test, describe, mock, beforeAll, afterAll } from 'bun:test'
+import {
+  expect,
+  test,
+  describe,
+  mock,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach
+} from 'bun:test'
 
 import {
   fetchUtil,
   parseResponseData
 } from '../../../src/services/utils/github.util'
 import { Repository } from '../../../src/models/Repository'
-
-const ORIGINAL_FETCH = global.fetch
 
 const TEST_ENDPOINT = 'https://api.example.test'
 
@@ -64,7 +71,7 @@ const TEST_RESPONSE_DATA = {
   status: 200
 } as Response
 
-const TEST_PARSED_REPO_ONE: Repository = {
+const PARSED_REPO_ONE: Repository = {
   gh_id: 123456,
   name: 'Test-Repo',
   full_name: 'user/Test-Repo',
@@ -75,7 +82,7 @@ const TEST_PARSED_REPO_ONE: Repository = {
   has_issues: true,
   created_at: '2025-06-26T23:05:15Z'
 }
-const TEST_PARSED_REPO_TWO: Repository = {
+const PARSED_REPO_TWO: Repository = {
   gh_id: 789123,
   name: 'Second-Repo',
   full_name: 'user/Second-Repo',
@@ -89,33 +96,47 @@ const TEST_PARSED_REPO_TWO: Repository = {
 
 const MOCK_FETCH = mock(() => Promise.resolve(TEST_RESPONSE_DATA))
 
-describe('fetchUtil', async () => {
+describe('Util functions suite', () => {
   beforeAll(() => {
-    mock.restore()
+    global.fetch = MOCK_FETCH as unknown as typeof fetch
   })
 
-  afterAll(() => {
-    global.fetch = ORIGINAL_FETCH
+  afterEach(() => {
+    MOCK_FETCH.mockClear()
   })
 
-  global.fetch = MOCK_FETCH as unknown as typeof fetch
+  describe('fetchUtil', async () => {
+    test('should be called with proper data', async () => {
+      await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
+      expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
 
-  const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      console.log(MOCK_FETCH.mock.calls)
+    })
 
-  test('should be called with proper data', () => {
-    expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
-    expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
+    test('should return a Response object', async () => {
+      const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
+
+      console.log(MOCK_FETCH.mock.calls)
+    })
   })
 
-  test('should return a Response object', async () => {
-    expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
+  describe('parseResponseData', () => {
+    test('should parse necessary data from API Response', async () => {
+      const parsedRepos = await parseResponseData(TEST_RESPONSE_DATA)
+
+      expect(parsedRepos).toEqual([PARSED_REPO_ONE, PARSED_REPO_TWO])
+    })
   })
-})
 
-describe('parseResponseData', () => {
-  test('should parse necessary data from API Response', async () => {
-    const parsedRepos = await parseResponseData(TEST_RESPONSE_DATA)
+  describe('FetchUserRepos', async () => {
+    // TODO: Implement tests.
 
-    expect(parsedRepos).toEqual([TEST_PARSED_REPO_ONE, TEST_PARSED_REPO_TWO])
+    test('test', async () => {
+      const result = await fetchUtil('pp.com')
+      console.log(MOCK_FETCH.mock.calls) // Should be empty at this point
+      expect(2).toBe(2)
+    })
   })
 })

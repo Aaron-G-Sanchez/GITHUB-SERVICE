@@ -68,9 +68,9 @@ export const parseResponseData = async (
     html_url: repo.html_url,
     fork: repo.fork,
     url: repo.url,
-    created_at: repo.created_at,
     open_issues_count: repo.open_issues_count,
-    has_issues: repo.has_issues
+    has_issues: repo.has_issues,
+    created_at: repo.created_at
   }))
 
   return repositories

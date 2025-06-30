@@ -3,8 +3,6 @@ dotenv.config()
 
 const TOKEN = process.env.GH_TOKEN
 
-if (!TOKEN) throw new Error('No GitHub User Token found.')
-
 /** Request Headers for the GitHub API.  */
 export const REQUEST_HEADERS = {
   'User-Agent': 'aaron-g-sanchez',

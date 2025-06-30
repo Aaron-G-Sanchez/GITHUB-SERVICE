@@ -45,6 +45,7 @@ export const fetchUtil = async (
   endpoint: string,
   options?: RequestInit
 ): Promise<Response> => {
+  // TODO: Add check for the `token` constant here.
   const response = await fetch(endpoint, {
     headers: {
       ...REQUEST_HEADERS,

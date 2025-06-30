@@ -134,22 +134,24 @@ describe('Util functions suite', () => {
 
   // TODO: Implement a test that validates the pagination logic.
   describe('FetchUserRepos', async () => {
-    test('should return a list of Repositories', async () => {
-      const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
-        headers: TEST_HEADERS
+    describe('when only one page of repositories is returned', () => {
+      test('should return a list of Repositories', async () => {
+        const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
+          headers: TEST_HEADERS
+        })
+
+        expect(response).toEqual([PARSED_REPO_ONE, PARSED_REPO_TWO])
       })
 
-      expect(response).toEqual([PARSED_REPO_ONE, PARSED_REPO_TWO])
-    })
+      test('should call the [fetchUtil] function', async () => {
+        await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+        expect(FETCH_UTIL_SPY).toBeCalledTimes(1)
+      })
 
-    test('should call the [fetchUtil] function', async () => {
-      await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
-      expect(FETCH_UTIL_SPY).toBeCalledTimes(1)
-    })
-
-    test('should call the [parseResponseData] function', async () => {
-      await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
-      expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
+      test('should call the [parseResponseData] function', async () => {
+        await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+        expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
+      })
     })
   })
 })

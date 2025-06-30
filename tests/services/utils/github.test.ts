@@ -4,15 +4,11 @@ import {
   describe,
   mock,
   beforeAll,
-  afterAll,
-  beforeEach,
-  afterEach
+  afterEach,
+  spyOn
 } from 'bun:test'
 
-import {
-  fetchUtil,
-  parseResponseData
-} from '../../../src/services/utils/github.util'
+import * as utils from '../../../src/services/utils/github.util'
 import { Repository } from '../../../src/models/Repository'
 
 const TEST_ENDPOINT = 'https://api.example.test'
@@ -68,7 +64,10 @@ const TEST_RESPONSE_DATA = {
         watchers: 100
       }
     ]),
-  status: 200
+  status: 200,
+  headers: new Headers({
+    link: '<http://api.example.com/user/repos>; rel="first"'
+  })
 } as Response
 
 const PARSED_REPO_ONE: Repository = {
@@ -96,6 +95,9 @@ const PARSED_REPO_TWO: Repository = {
 
 const MOCK_FETCH = mock(() => Promise.resolve(TEST_RESPONSE_DATA))
 
+const FETCH_UTIL_SPY = spyOn(utils, 'fetchUtil')
+const PARSE_RESPONSE_DATA_SPY = spyOn(utils, 'parseResponseData')
+
 describe('Util functions suite', () => {
   beforeAll(() => {
     global.fetch = MOCK_FETCH as unknown as typeof fetch
@@ -103,40 +105,51 @@ describe('Util functions suite', () => {
 
   afterEach(() => {
     MOCK_FETCH.mockClear()
+    FETCH_UTIL_SPY.mockClear()
+    PARSE_RESPONSE_DATA_SPY.mockClear()
   })
 
   describe('fetchUtil', async () => {
     test('should be called with proper data', async () => {
-      await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      await utils.fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
       expect(MOCK_FETCH).toHaveBeenCalledTimes(1)
       expect(MOCK_FETCH.mock.calls[0]).toContain(TEST_ENDPOINT)
-
-      console.log(MOCK_FETCH.mock.calls)
     })
 
     test('should return a Response object', async () => {
-      const result = await fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      const result = await utils.fetchUtil(TEST_ENDPOINT, {
+        headers: TEST_HEADERS
+      })
       expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
-
-      console.log(MOCK_FETCH.mock.calls)
     })
   })
 
   describe('parseResponseData', () => {
     test('should parse necessary data from API Response', async () => {
-      const parsedRepos = await parseResponseData(TEST_RESPONSE_DATA)
+      const parsedRepos = await utils.parseResponseData(TEST_RESPONSE_DATA)
 
       expect(parsedRepos).toEqual([PARSED_REPO_ONE, PARSED_REPO_TWO])
     })
   })
 
+  // TODO: Implement a test that validates the pagination logic.
   describe('FetchUserRepos', async () => {
-    // TODO: Implement tests.
+    test('should return a list of Repositories', async () => {
+      const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
+        headers: TEST_HEADERS
+      })
 
-    test('test', async () => {
-      const result = await fetchUtil('pp.com')
-      console.log(MOCK_FETCH.mock.calls) // Should be empty at this point
-      expect(2).toBe(2)
+      expect(response).toEqual([PARSED_REPO_ONE, PARSED_REPO_TWO])
+    })
+
+    test('should call the [fetchUtil] function', async () => {
+      await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      expect(FETCH_UTIL_SPY).toBeCalledTimes(1)
+    })
+
+    test('should call the [parseResponseData] function', async () => {
+      await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+      expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
     })
   })
 })

@@ -1,16 +1,21 @@
 import { REQUEST_HEADERS, NEXT_PATTERN_REG } from '../../lib/constants.lib'
 import { Repository } from '../../models/Repository'
 
-// TODO: Implement function.
-// TODO: Utilize the Link headers that comes from the API response.
+/**
+ * Service util to fetch all of a users GitHub repositories.
+ *
+ * @param endpoint GitHub API endpoint.
+ * @returns list of repositories.
+ */
 export const FetchUserRepos = async (
-  endpoint: string
+  endpoint: string,
+  options?: RequestInit
 ): Promise<Repository[]> => {
   let pagesRemaining = true
   let repositoryData: Repository[] = []
 
   while (pagesRemaining) {
-    const res = await fetchUtil(endpoint)
+    const res = await fetchUtil(endpoint, options)
 
     const parsedData = await parseResponseData(res)
 

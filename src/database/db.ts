@@ -7,6 +7,7 @@ dotenv.config()
 
 export const collections: { repositories?: Collection<Repository> } = {}
 
+// TODO: Add environment based DB connection.
 export const connect = async (): Promise<MongoClient | Error> => {
   const MONGO_DB_URI = process.env.MONGO_DB_URI
 

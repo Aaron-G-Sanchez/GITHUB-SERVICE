@@ -5,13 +5,13 @@ import { Repository } from '../models/Repository'
 
 dotenv.config()
 
-const MONGO_DB_URI = process.env.MONGO_DB_URI
-
-if (!MONGO_DB_URI) throw new Error('No MONGO_DB_URI found.')
-
 export const collections: { repositories?: Collection<Repository> } = {}
 
-export const connect = async (): Promise<MongoClient> => {
+export const connect = async (): Promise<MongoClient | Error> => {
+  const MONGO_DB_URI = process.env.MONGO_DB_URI
+
+  if (!MONGO_DB_URI) return new Error('No MONGO_DB_URI found.')
+
   const client = new MongoClient(MONGO_DB_URI, {
     serverApi: {
       version: ServerApiVersion.v1,

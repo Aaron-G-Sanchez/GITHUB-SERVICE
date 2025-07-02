@@ -4,11 +4,14 @@ import { connect, collections } from '../database/db'
 import { MongoClient } from 'mongodb'
 
 export const PopulateDatabase = async (): Promise<MongoClient> => {
-  const client = await connect()
+  let client = await connect()
 
-  const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
+  if (client instanceof Error) {
+    throw client
+  }
 
   try {
+    const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
     await collections.repositories?.insertMany(repositories)
     console.log('Repositories written to DB: ', repositories.length)
   } catch (err) {

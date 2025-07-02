@@ -1,22 +1,22 @@
-import fs from 'fs'
-
 import { GITHUB_USER_REPOS_URL } from '../lib/constants.lib'
 import { FetchUserRepos } from './utils/github.util'
+import { connect, collections } from '../database/db'
+import { MongoClient } from 'mongodb'
 
-const testPopulateDatabase = async () => {
-  const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
+export const PopulateDatabase = async (): Promise<MongoClient> => {
+  let client = await connect()
 
-  // TODO: Replace with population into the DB.
-  // Write sample data to a sample file.
-  fs.writeFile(
-    'data.json',
-    JSON.stringify(repositories, null, 2),
-    'utf-8',
-    (err) => {
-      if (err) throw err
-      console.log(`Wrote ${repositories.length} repositories.`)
-    }
-  )
+  if (client instanceof Error) {
+    throw client
+  }
+
+  try {
+    const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
+    await collections.repositories?.insertMany(repositories)
+    console.log('Repositories written to DB: ', repositories.length)
+  } catch (err) {
+    console.error('Error writing to DB: ', err)
+  }
+
+  return client
 }
-
-testPopulateDatabase()

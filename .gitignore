@@ -137,3 +137,6 @@ dist
 
 # test data
 data.json
+
+# notes file
+notes.txt

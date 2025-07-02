@@ -1,4 +1,4 @@
-import { Collection, Db, MongoClient, ServerApiVersion } from 'mongodb'
+import { Collection, MongoClient, ServerApiVersion } from 'mongodb'
 import dotenv from 'dotenv'
 
 import { Repository } from '../models/Repository'
@@ -11,7 +11,7 @@ if (!MONGO_DB_URI) throw new Error('No MONGO_DB_URI found.')
 
 export const collections: { repositories?: Collection<Repository> } = {}
 
-export const connect = async () => {
+export const connect = async (): Promise<MongoClient> => {
   const client = new MongoClient(MONGO_DB_URI, {
     serverApi: {
       version: ServerApiVersion.v1,
@@ -28,7 +28,7 @@ export const connect = async () => {
 
   collections.repositories = repositoriesCollection
 
-  console.log(
-    `Successfully connected to database: ${db.databaseName} and collection: ${repositoriesCollection.collectionName}`
-  )
+  console.log(`Successfully connected to database: ${db.databaseName}`)
+
+  return client
 }

@@ -1,7 +1,6 @@
-import { ObjectId } from 'mongodb'
 import { Request, Response, Router, json } from 'express'
 
-import { collections } from '../util/db'
+import { collections } from '../database/db'
 
 export const repositoriesRouter = Router()
 

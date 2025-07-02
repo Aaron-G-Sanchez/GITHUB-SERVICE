@@ -12,6 +12,7 @@
     "@types/morgan": "^1.9.10"
   },
   "scripts": {
-    "dev": "bun run ./src/index.ts"
+    "dev": "bun run ./src/index.ts",
+    "populate": "bun run ./src/services/population.service.ts"
   }
 }

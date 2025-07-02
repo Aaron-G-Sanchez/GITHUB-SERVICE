@@ -7,8 +7,8 @@ export const server: Express = express()
 
 server.use(morgan(':method :url :status | :response-time ms'))
 
-server.get('/hello-world', (req: Request, res: Response) => {
+server.get('api/v1/hello-world', (req: Request, res: Response) => {
   res.status(200).json({ msg: 'Hello, World!' })
 })
 
-server.use('/repos', repositoriesRouter)
+server.use('api/v1/repos', repositoriesRouter)

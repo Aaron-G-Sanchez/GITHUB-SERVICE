@@ -1,7 +1,7 @@
 import { server } from './server'
 import dotenv from 'dotenv'
 
-import { connect } from './util/db'
+import { connect } from './database/db'
 
 dotenv.config()
 

@@ -26,7 +26,7 @@ const MOCK_FETCH_USERS_RESPONSE = [
     html_url: 'http://example.com/user/Second-Repo',
     fork: true,
     url: 'http://api.example.com/repos/user/Second-Repo',
-    open_issues_count: 3,
+    open_issues_count: 0,
     has_issues: true,
     created_at: '2025-06-27T23:05:15Z'
   },
@@ -45,6 +45,7 @@ const MOCK_FETCH_USERS_RESPONSE = [
 
 const DB_CONNECTION_SPY = spyOn(db, 'connect')
 const FETCH_USER_REPOS_SPY = spyOn(util, 'FetchUserRepos')
+const FILTER_REPOS_SPY = spyOn(util, 'FilterReposWithIssues')
 
 describe('services test suite:', () => {
   let mongoServer: MongoMemoryServer
@@ -77,6 +78,7 @@ describe('services test suite:', () => {
 
     test('should connect and fetch user repositories', async () => {
       expect(DB_CONNECTION_SPY).toHaveBeenCalledTimes(1)
+      expect(FILTER_REPOS_SPY).toHaveBeenCalledTimes(1)
       expect(FETCH_USER_REPOS_SPY).toHaveBeenCalledTimes(1)
     })
 

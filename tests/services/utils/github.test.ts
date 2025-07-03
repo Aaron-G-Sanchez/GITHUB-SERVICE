@@ -37,7 +37,7 @@ const TEST_RESPONSE_DATA = {
         html_url: 'http://example.com/user/Test-Repo',
         fork: false,
         url: 'http://api.example.com/repos/user/Test-Repo',
-        open_issues_count: 8,
+        open_issues_count: 0,
         has_pages: false,
         has_issues: true,
         created_at: '2025-06-26T23:05:15Z',
@@ -77,7 +77,7 @@ const PARSED_REPO_ONE: Repository = {
   html_url: 'http://example.com/user/Test-Repo',
   fork: false,
   url: 'http://api.example.com/repos/user/Test-Repo',
-  open_issues_count: 8,
+  open_issues_count: 0,
   has_issues: true,
   created_at: '2025-06-26T23:05:15Z'
 }
@@ -152,6 +152,17 @@ describe('Util functions suite', () => {
         await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
         expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
       })
+    })
+  })
+
+  describe('FilterReposWithIssues', () => {
+    test('should return repos that have active issues', () => {
+      const result = utils.FilterReposWithIssues([
+        PARSED_REPO_ONE,
+        PARSED_REPO_TWO
+      ])
+
+      expect(result).toEqual(expect.arrayContaining([PARSED_REPO_TWO]))
     })
   })
 })

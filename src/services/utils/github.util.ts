@@ -35,6 +35,21 @@ export const FetchUserRepos = async (
 }
 
 /**
+ *
+ * Service util to filter out repositories with active issues.
+ *
+ * @param repos A list of all repositories.
+ * @returns A filtered list of repositories with active issues.
+ */
+export const FilterReposWithIssues = (repos: Repository[]): Repository[] => {
+  const filteredReposWithIssues = repos.filter(
+    (repo) => repo.open_issues_count > 0
+  )
+
+  return filteredReposWithIssues
+}
+
+/**
  * Fetch utility function.
  *
  * @param endpoint a github API endpoint.

@@ -1,4 +1,9 @@
-import { REQUEST_HEADERS, NEXT_PATTERN_REG } from '../../lib/constants.lib'
+import {
+  REQUEST_HEADERS,
+  NEXT_PATTERN_REG,
+  GITHUB_REPO_ISSUES_URL
+} from '../../lib/constants.lib'
+import { Issue } from '../../models/Issue'
 import { Repository } from '../../models/Repository'
 
 /**
@@ -34,6 +39,67 @@ export const FetchUserRepos = async (
   return repositoryData
 }
 
+// TODO: Unit test.
+/**
+ * Service util to fetch all issues for a given repo.
+ *
+ * @param repos List of repositories that have active issues.
+ *
+ */
+export const FetchIssues = async (
+  repos: Repository[],
+  options?: RequestInit
+): Promise<Repository[]> => {
+  // TODO: Look into just returning the issues.
+  const enrichedRepos = repos.map(async (repo) => {
+    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all`
+
+    const repoIssues = await fetchUtil(endpoint, options)
+
+    const parsedData = await parseIssues(repoIssues)
+
+    return {
+      ...repo,
+      issues: parsedData
+    }
+  })
+
+  return await Promise.all(enrichedRepos)
+}
+
+/**
+ * Service util to filter out repositories with active issues.
+ *
+ * @param repos A list of all repositories.
+ * @returns A filtered list of repositories with active issues.
+ */
+export const FilterReposWithIssues = (repos: Repository[]): Repository[] => {
+  const filteredReposWithIssues = repos.filter(
+    (repo) => repo.open_issues_count > 0
+  )
+
+  return filteredReposWithIssues
+}
+
+/**
+ * Util to merge two lists of repositories.
+ *
+ */
+export const MergeRepos = (
+  repos: Repository[],
+  reposWithIssues: Repository[]
+): Repository[] => {
+  const result = repos.map((repo) => {
+    const repoWithIssues = reposWithIssues.find((r) => repo.gh_id === r.gh_id)
+    return {
+      ...repo,
+      ...repoWithIssues
+    }
+  })
+
+  return result
+}
+
 /**
  * Fetch utility function.
  *
@@ -59,7 +125,7 @@ export const fetchUtil = async (
  * Util to parse GitHub API response data for the /repos endpoint.
  *
  * @param [responseData] Fetch API Response.
- * @returns Promise<Repository> - Array of Repositories.
+ * @returns Array of Repositories.
  */
 export const parseResponseData = async (
   responseData: Response
@@ -80,4 +146,26 @@ export const parseResponseData = async (
   }))
 
   return repositories
+}
+
+// TODO: Unit test.
+/**
+ * Util to parse GitHub API response data for the /issues endpoint.
+ *
+ * @param responseData
+ * @returns Array of issues.
+ */
+export const parseIssues = async (responseData: Response): Promise<Issue[]> => {
+  const data = await responseData.json()
+
+  const issues: Issue[] = data.map((issue: any) => ({
+    gh_id: issue.id,
+    number: issue.number,
+    state: issue.state,
+    title: issue.title,
+    body: issue.body,
+    repository_url: issue.repository_url
+  }))
+
+  return issues
 }

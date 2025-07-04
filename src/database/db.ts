@@ -23,6 +23,7 @@ export const connect = async (): Promise<MongoClient | Error> => {
 
   await client.connect()
 
+  // TODO: Add DB name.
   const db = client.db()
 
   const repositoriesCollection = db.collection<Repository>('repositories')

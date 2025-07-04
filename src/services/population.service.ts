@@ -20,29 +20,13 @@ export const PopulateDatabase = async (): Promise<MongoClient> => {
   try {
     const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
 
-    // TODO: Add tests.
     const filteredRepos = FilterReposWithIssues(repositories)
-    // TODO: Add population strategy for the issues.
-    // - Need to enrich the original repositories array with a repos respective issue set
+
     const reposWithIssues = await FetchIssues(filteredRepos)
 
     const mergedRepos = MergeRepos(repositories, reposWithIssues)
 
-    // TODO: Populate issues.
-    // TODO: Save the issue._id in the repository.issues array.
-    // TODO: Remove file write once function is finalized.
-    fs.writeFile(
-      'data.json',
-      JSON.stringify(mergedRepos, null, 2),
-      'utf-8',
-      (err) => {
-        if (err) throw err
-
-        console.log(`files written: ${mergedRepos.length}`)
-      }
-    )
-
-    await collections.repositories?.insertMany(repositories)
+    await collections.repositories?.insertMany(mergedRepos)
   } catch (err) {
     client.close()
 

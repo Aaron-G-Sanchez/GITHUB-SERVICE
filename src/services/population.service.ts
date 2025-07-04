@@ -1,4 +1,3 @@
-import fs from 'fs'
 import { MongoClient } from 'mongodb'
 
 import { GITHUB_USER_REPOS_URL } from '../lib/constants.lib'

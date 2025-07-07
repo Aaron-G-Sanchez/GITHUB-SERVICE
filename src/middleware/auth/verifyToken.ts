@@ -7,18 +7,30 @@ dotenv.config()
 /**
  * Auth middleware to validate token.
  */
-const validateToken = (req: Request, res: Response, next: NextFunction) => {
-  const SECRET = process.env.SECRET_TOKEN
-  const token = req.headers.authorization
+export const ValidateToken = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const authHeader = req.headers.authorization
 
-  if (!SECRET) throw new Error('No Secret token')
-
-  if (!token) {
-    res.status(404).json({ error: 'No Token' })
+  if (!authHeader || !authHeader.startsWith('Bearer')) {
+    res.status(401).json({ error: 'Missing or malformed Authorization header' })
     return
   }
 
-  if (safeCompare(token, SECRET)) next()
+  const token = authHeader.split(' ')[1]
+
+  const SECRET = process.env.SECRET_TOKEN || ''
+
+  if (!safeCompare(token, SECRET)) {
+    res.status(403).json({ error: 'Invalid token' })
+
+    return
+  }
+
+  console.log('TOKEN IS GOOD')
+  next()
 }
 
 const safeCompare = (a: string, b: string) => {

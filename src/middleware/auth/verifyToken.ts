@@ -29,7 +29,6 @@ export const ValidateToken = (
     return
   }
 
-  console.log('TOKEN IS GOOD')
   next()
 }
 

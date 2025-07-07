@@ -10,7 +10,6 @@ let TEST_RESPONSE: Response
 let TEST_NEXT: NextFunction
 
 describe('Middleware: [auth] test suite', () => {
-  // TODO: Add unit test to validate the `ValidateToken` function
   describe('ValidateToken', () => {
     beforeEach(() => {
       TEST_REQUEST = {
@@ -49,7 +48,7 @@ describe('Middleware: [auth] test suite', () => {
       expect(TEST_NEXT).not.toHaveBeenCalled()
     })
 
-    test('should return 403 when no token is incorrect', () => {
+    test('should return 403 when token is incorrect', () => {
       TEST_REQUEST.headers.authorization = 'Bearer wrong-token'
 
       auth.ValidateToken(TEST_REQUEST, TEST_RESPONSE, TEST_NEXT)

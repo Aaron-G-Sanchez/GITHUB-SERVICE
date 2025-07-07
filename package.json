@@ -13,7 +13,7 @@
     "mongodb-memory-server": "^10.1.4"
   },
   "scripts": {
-    "dev": "bun run ./src/index.ts",
+    "dev": "bun --watch run ./src/index.ts",
     "populate": "bun run ./scripts/populate.script.ts"
   }
 }

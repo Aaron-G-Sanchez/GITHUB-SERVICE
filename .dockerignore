@@ -1,0 +1,23 @@
+# Node
+node_modules
+dist
+
+# Environment Variables
+.env
+.env.local
+.env.*
+
+# Version Control 
+.git
+.gitignore
+
+# IDE and Editor Files
+.vscode
+.idea
+
+# Testing
+tests
+*.tests.ts
+
+# OS_Files
+.DS_Store

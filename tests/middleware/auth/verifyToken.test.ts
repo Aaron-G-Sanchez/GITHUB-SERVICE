@@ -22,8 +22,6 @@ describe('Middleware: [auth] test suite', () => {
       } as unknown as Response
 
       TEST_NEXT = mock() as NextFunction
-
-      process.env.SECRET_TOKEN = TEST_SECRET
     })
 
     test('should return 401 when no token is provided', () => {

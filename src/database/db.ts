@@ -1,15 +1,13 @@
 import { Collection, MongoClient, ServerApiVersion } from 'mongodb'
-import dotenv from 'dotenv'
 
 import { Repository } from '../models/Repository'
-
-dotenv.config()
+import { config } from '../config/config.config'
 
 export const collections: { repositories?: Collection<Repository> } = {}
 
 // TODO: Add environment based DB connection.
 export const connect = async (): Promise<MongoClient | Error> => {
-  const MONGO_DB_URI = process.env.MONGO_DB_URI
+  const MONGO_DB_URI = config.dbConnectionString
 
   if (!MONGO_DB_URI) return new Error('No MONGO_DB_URI found.')
 

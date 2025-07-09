@@ -1,8 +1,7 @@
 import crypto from 'crypto'
 import { Request, Response, NextFunction } from 'express'
-import dotenv from 'dotenv'
 
-dotenv.config()
+import { config } from '../../config/config.config'
 
 /**
  * Auth middleware to validate token.
@@ -21,7 +20,7 @@ export const ValidateToken = (
 
   const token = authHeader.split(' ')[1]
 
-  const SECRET = process.env.SECRET_TOKEN || ''
+  const SECRET = config.secretKey
 
   if (!safeCompare(token, SECRET)) {
     res.status(403).json({ error: 'Invalid token' })

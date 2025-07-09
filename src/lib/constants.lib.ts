@@ -1,13 +1,10 @@
-import dotenv from 'dotenv'
-dotenv.config()
-
-const TOKEN = process.env.GH_TOKEN
+import { config } from '../config/config.config'
 
 /** Request Headers for the GitHub API.  */
 export const REQUEST_HEADERS = {
   'User-Agent': 'aaron-g-sanchez',
   'X-GitHub-Api-Version': '2022-11-28',
-  Authorization: `Bearer ${TOKEN}`
+  Authorization: `Bearer ${config.personalAccessToken}`
 }
 
 /** URL to fetch all of an authorized users repositories. */

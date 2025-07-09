@@ -16,5 +16,3 @@ export const GITHUB_REPO_ISSUES_URL =
 
 /** REGEX to get the [Next] url from the GitHub API Response Headers  */
 export const NEXT_PATTERN_REG = /(?<=<)([\S]*)(?=>; rel="Next")/i
-
-console.log(REQUEST_HEADERS)

@@ -13,6 +13,17 @@ const getResource = (resourceKey: string): string => {
   return value
 }
 
+/**
+ * Object to hold all environment variables.
+ *
+ * @constant {Object} Config
+ * @property {string} port - Exposed port
+ * @property {string} environment - Current environment
+ * @property {string} dbConnectionString - MongoDB connection URI
+ * @property {string} secretKey - Secret key used for API auth.
+ * @property {string} personalAccessToken - GitHub PAT for REST API usage.
+ *
+ */
 export const config: Config = {
   port: getResource('PORT'),
   environment: getResource('ENVIRONMENT'),

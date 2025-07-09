@@ -2,6 +2,7 @@ import { mock } from 'bun:test'
 
 mock.module('../src/config/config.config', () => ({
   config: {
-    secretKey: 'test-secret'
+    secretKey: 'test-secret',
+    environment: 'test'
   }
 }))

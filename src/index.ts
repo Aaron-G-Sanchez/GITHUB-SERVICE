@@ -1,11 +1,8 @@
 import { server } from './server'
-import dotenv from 'dotenv'
-
 import { connect } from './database/db'
+import { config } from './config/config.config'
 
-dotenv.config()
-
-const PORT = process.env.PORT || 8080
+const PORT = config.port
 
 connect()
   .then(() => {

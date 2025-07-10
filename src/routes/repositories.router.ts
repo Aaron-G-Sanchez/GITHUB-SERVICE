@@ -1,6 +1,6 @@
 import { Request, Response, Router, json } from 'express'
 
-import { collections } from '../database/db'
+import { collections } from '@database/db'
 
 export const repositoriesRouter = Router()
 

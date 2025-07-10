@@ -1,4 +1,4 @@
-import { config } from '../config/config.config'
+import { config } from '@config/config.config'
 
 /** Request Headers for the GitHub API.  */
 export const REQUEST_HEADERS = {

@@ -1,4 +1,4 @@
-import { PopulateDatabase } from '../src/services/population.service'
+import { PopulateDatabase } from '@services/populate/population.service'
 
 PopulateDatabase()
   .then((client) => {

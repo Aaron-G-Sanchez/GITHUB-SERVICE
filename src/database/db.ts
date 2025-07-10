@@ -1,7 +1,7 @@
 import { Collection, MongoClient, ServerApiVersion } from 'mongodb'
 
-import { Repository } from '../models/Repository'
-import { config } from '../config/config.config'
+import { Repository } from '@models/Repository'
+import { config } from '@config/config.config'
 
 export const collections: { repositories?: Collection<Repository> } = {}
 

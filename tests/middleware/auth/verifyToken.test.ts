@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, mock } from 'bun:test'
 import { Request, Response, NextFunction } from 'express'
 
-import * as auth from '../../../src/middleware/auth/verifyToken'
+import * as auth from '@middleware/auth/verifyToken'
 
 const TEST_SECRET = 'test-secret'
 

@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import { Request, Response, NextFunction } from 'express'
 
-import { config } from '../../config/config.config'
+import { config } from '@config/config.config'
 
 /**
  * Auth middleware to validate token.

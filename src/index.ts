@@ -1,6 +1,6 @@
-import { server } from './server'
-import { connect } from './database/db'
-import { config } from './config/config.config'
+import { server } from '@base/server'
+import { connect } from '@database/db'
+import { config } from '@config/config.config'
 
 const PORT = config.port
 

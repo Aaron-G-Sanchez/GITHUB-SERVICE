@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { Config } from '../interfaces/config.interface'
+import { Config } from '@interfaces/config.interface'
 
 dotenv.config()
 

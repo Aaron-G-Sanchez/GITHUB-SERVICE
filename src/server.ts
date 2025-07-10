@@ -1,9 +1,9 @@
 import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
 
-import { ValidateToken } from './middleware/auth/verifyToken'
-import { repositoriesRouter } from './routes/repositories.router'
-import { config } from './config/config.config'
+import { ValidateToken } from '@middleware/auth/verifyToken'
+import { repositoriesRouter } from '@routes/repositories.router'
+import { config } from '@config/config.config'
 
 export const server: Express = express()
 

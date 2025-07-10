@@ -2,9 +2,9 @@ import {
   REQUEST_HEADERS,
   NEXT_PATTERN_REG,
   GITHUB_REPO_ISSUES_URL
-} from '../../lib/constants.lib'
-import { Issue } from '../../models/Issue'
-import { Repository } from '../../models/Repository'
+} from '@library/constants.lib'
+import { Issue } from '@models/Issue'
+import { Repository } from '@models/Repository'
 
 /**
  * Service util to fetch all of a users GitHub repositories.

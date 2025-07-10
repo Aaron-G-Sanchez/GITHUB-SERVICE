@@ -2,12 +2,12 @@ import { describe, test, expect, beforeAll, afterAll, spyOn } from 'bun:test'
 import { MongoClient } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
-import * as db from '../../src/database/db'
-import * as util from '../../src/services/utils/github.util'
-import { PopulateDatabase } from '../../src/services/population.service'
-import { Repository } from '../../src/models/Repository'
+import * as db from '@database/db'
+import * as util from '@services/populate/utils/github.util'
+import { PopulateDatabase } from '@services/populate/population.service'
+import { Repository } from '@models/Repository'
 
-const MOCK_FETCH_USERS_RESPONSE: Repository[] = [
+const MOCK_FETCH_USER_REPOS_RESPONSE: Repository[] = [
   {
     gh_id: 123456,
     name: 'Test-Repo',
@@ -176,7 +176,7 @@ describe('services test suite:', () => {
     DB_CONNECTION_SPY.mockImplementation(() => MOCK_DB_CONNECTION(mongoServer))
 
     FETCH_USER_REPOS_SPY.mockImplementation(() => {
-      return Promise.resolve(MOCK_FETCH_USERS_RESPONSE)
+      return Promise.resolve(MOCK_FETCH_USER_REPOS_RESPONSE)
     })
 
     FETCH_ISSUES_SPY.mockImplementation(() => {

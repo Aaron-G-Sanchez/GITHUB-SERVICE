@@ -8,9 +8,9 @@ import {
   beforeEach
 } from 'bun:test'
 
-import * as utils from '../../../src/services/utils/github.util'
-import { Repository } from '../../../src/models/Repository'
-import { Issue } from '../../../src/models/Issue'
+import * as utils from '@services/populate/utils/github.util'
+import { Repository } from '@models/Repository'
+import { Issue } from '@models/Issue'
 
 const TEST_ENDPOINT = 'https://api.example.test'
 

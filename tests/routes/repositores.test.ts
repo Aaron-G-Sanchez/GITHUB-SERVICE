@@ -2,9 +2,9 @@ import { describe, test, expect, beforeEach } from 'bun:test'
 import request from 'supertest'
 import { Collection } from 'mongodb'
 
-import { server } from '../../src/server'
-import { collections } from '../../src/database/db'
-import { Repository } from '../../src/models/Repository'
+import { server } from '@base/server'
+import { collections } from '@database/db'
+import { Repository } from '@models/Repository'
 
 const MOCK_REPOS = [
   {

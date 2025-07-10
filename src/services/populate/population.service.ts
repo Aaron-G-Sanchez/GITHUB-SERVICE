@@ -1,13 +1,13 @@
 import { MongoClient } from 'mongodb'
 
-import { GITHUB_USER_REPOS_URL } from '../lib/constants.lib'
+import { GITHUB_USER_REPOS_URL } from '../../lib/constants.lib'
 import {
   FetchIssues,
   FetchUserRepos,
   FilterReposWithIssues,
   MergeRepos
 } from './utils/github.util'
-import { connect, collections } from '../database/db'
+import { connect, collections } from '../../database/db'
 
 export const PopulateDatabase = async (): Promise<MongoClient> => {
   let client = await connect()

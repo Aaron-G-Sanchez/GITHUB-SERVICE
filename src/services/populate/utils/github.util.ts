@@ -39,7 +39,6 @@ export const FetchUserRepos = async (
   return repositoryData
 }
 
-// TODO: Unit test.
 /**
  * Service util to fetch all issues for a given repo.
  *
@@ -52,7 +51,7 @@ export const FetchIssues = async (
 ): Promise<Repository[]> => {
   // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
-    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all`
+    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100`
 
     const repoIssues = await fetchUtil(endpoint, options)
 
@@ -99,6 +98,8 @@ export const MergeRepos = (
 
   return result
 }
+
+// ****** TODO: REMOVE EXPORTS FOR THESE HELPER FUNCTIONS ******
 
 /**
  * Fetch utility function.
@@ -148,7 +149,6 @@ export const parseResponseData = async (
   return repositories
 }
 
-// TODO: Unit test.
 /**
  * Util to parse GitHub API response data for the /issues endpoint.
  *

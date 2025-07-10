@@ -1,14 +1,20 @@
 import { MongoClient } from 'mongodb'
 
-import { GITHUB_USER_REPOS_URL } from '../../lib/constants.lib'
+import { GITHUB_USER_REPOS_URL } from '@library/constants.lib'
 import {
   FetchIssues,
   FetchUserRepos,
   FilterReposWithIssues,
   MergeRepos
 } from './utils/github.util'
-import { connect, collections } from '../../database/db'
+import { connect, collections } from '@database/db'
 
+/**
+ * Function to populate the connected database.
+ *
+ * @returns Promise<MongoClient> - Mongo client to be closed by the calling script.
+ *
+ */
 export const PopulateDatabase = async (): Promise<MongoClient> => {
   let client = await connect()
 

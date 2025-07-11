@@ -5,7 +5,6 @@ import { Repository } from '@models/Repository'
  * Util to get all repos in the db.
  *
  */
-// TODO: test.
 export const GetAllRepoIds = async () => {
   const cursor = collections.repositories?.find(
     {},
@@ -23,8 +22,6 @@ export const GetAllRepoIds = async () => {
  *
  * @returns Promise - Returns a Repository document or null | unknown
  */
-// TODO: Test.
-// TODO: Replace created_at with updated_at.
 export const GetLastEntry = async () => {
   const entry = await collections.repositories?.findOne(
     {},

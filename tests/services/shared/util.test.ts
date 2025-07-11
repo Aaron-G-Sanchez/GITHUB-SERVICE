@@ -8,7 +8,7 @@ import {
   beforeEach
 } from 'bun:test'
 
-import * as utils from '@services/populate/utils/github.util'
+import * as utils from '@service-utils/util.shared'
 import { Repository } from '@models/Repository'
 import { Issue } from '@models/Issue'
 
@@ -234,112 +234,114 @@ const FETCH_UTIL_SPY = spyOn(utils, 'fetchUtil')
 const PARSE_RESPONSE_DATA_SPY = spyOn(utils, 'parseResponseData')
 const PARSE_ISSUES_SPY = spyOn(utils, 'parseIssues')
 
-describe('Util functions suite', () => {
-  beforeEach(() => {
-    global.fetch = MOCK_FETCH_REPOSITORIES as unknown as typeof fetch
-  })
-
-  afterEach(() => {
-    MOCK_FETCH_REPOSITORIES.mockClear()
-    FETCH_UTIL_SPY.mockClear()
-    PARSE_RESPONSE_DATA_SPY.mockClear()
-    PARSE_ISSUES_SPY.mockClear()
-  })
-  describe('fetchUtil', async () => {
-    // TODO: Add tests for when the fetch is used for fetching Issues or Repos.
-    test('should be called with proper data', async () => {
-      await utils.fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
-      expect(MOCK_FETCH_REPOSITORIES).toHaveBeenCalledTimes(1)
-      expect(MOCK_FETCH_REPOSITORIES.mock.calls[0]).toContain(TEST_ENDPOINT)
+describe('Service test suite:', () => {
+  describe('shared utils', () => {
+    beforeEach(() => {
+      global.fetch = MOCK_FETCH_REPOSITORIES as unknown as typeof fetch
     })
 
-    test('should return a Response object', async () => {
-      const result = await utils.fetchUtil(TEST_ENDPOINT, {
-        headers: TEST_HEADERS
+    afterEach(() => {
+      MOCK_FETCH_REPOSITORIES.mockClear()
+      FETCH_UTIL_SPY.mockClear()
+      PARSE_RESPONSE_DATA_SPY.mockClear()
+      PARSE_ISSUES_SPY.mockClear()
+    })
+    describe('fetchUtil', async () => {
+      // TODO: Add tests for when the fetch is used for fetching Issues or Repos.
+      test('should be called with proper data', async () => {
+        await utils.fetchUtil(TEST_ENDPOINT, { headers: TEST_HEADERS })
+        expect(MOCK_FETCH_REPOSITORIES).toHaveBeenCalledTimes(1)
+        expect(MOCK_FETCH_REPOSITORIES.mock.calls[0]).toContain(TEST_ENDPOINT)
       })
-      expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
-    })
-  })
 
-  describe('parseResponseData', () => {
-    test('should parse necessary data from API Response', async () => {
-      const parsedRepos = await utils.parseResponseData(TEST_RESPONSE_DATA)
-
-      expect(parsedRepos).toEqual([
-        PARSED_REPO_ONE,
-        PARSED_REPO_TWO,
-        PARSED_REPO_THREE
-      ])
-    })
-  })
-
-  // TODO: Implement a test that validates the pagination logic.
-  describe('FetchUserRepos', async () => {
-    describe('when only one page of repositories is returned', () => {
-      test('should return a list of Repositories', async () => {
-        const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
+      test('should return a Response object', async () => {
+        const result = await utils.fetchUtil(TEST_ENDPOINT, {
           headers: TEST_HEADERS
         })
+        expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
+      })
+    })
 
-        expect(response).toEqual([
+    describe('parseResponseData', () => {
+      test('should parse necessary data from API Response', async () => {
+        const parsedRepos = await utils.parseResponseData(TEST_RESPONSE_DATA)
+
+        expect(parsedRepos).toEqual([
           PARSED_REPO_ONE,
           PARSED_REPO_TWO,
           PARSED_REPO_THREE
         ])
       })
+    })
 
-      test('should call the [fetchUtil] function', async () => {
-        await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
-        expect(FETCH_UTIL_SPY).toBeCalledTimes(1)
+    // TODO: Implement a test that validates the pagination logic.
+    describe('FetchUserRepos', async () => {
+      describe('when only one page of repositories is returned', () => {
+        test('should return a list of Repositories', async () => {
+          const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
+            headers: TEST_HEADERS
+          })
+
+          expect(response).toEqual([
+            PARSED_REPO_ONE,
+            PARSED_REPO_TWO,
+            PARSED_REPO_THREE
+          ])
+        })
+
+        test('should call the [fetchUtil] function', async () => {
+          await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+          expect(FETCH_UTIL_SPY).toBeCalledTimes(1)
+        })
+
+        test('should call the [parseResponseData] function', async () => {
+          await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
+          expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
+        })
+      })
+    })
+
+    describe('FilterReposWithIssues', () => {
+      test('should return repos that have active issues', () => {
+        const result = utils.FilterReposWithIssues([
+          PARSED_REPO_ONE,
+          PARSED_REPO_TWO,
+          PARSED_REPO_THREE
+        ])
+
+        expect(result).toEqual(
+          expect.arrayContaining([PARSED_REPO_TWO, PARSED_REPO_THREE])
+        )
+      })
+    })
+
+    describe('FetchIssues', () => {
+      const repoList = [PARSED_REPO_TWO, PARSED_REPO_THREE]
+
+      beforeEach(() => {
+        global.fetch = MOCK_FETCH_ISSUES as unknown as typeof fetch
       })
 
-      test('should call the [parseResponseData] function', async () => {
-        await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
-        expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
-      })
-    })
-  })
+      test('should return a list of repositories with their issues', async () => {
+        const response = await utils.FetchIssues(repoList, {
+          headers: TEST_HEADERS
+        })
 
-  describe('FilterReposWithIssues', () => {
-    test('should return repos that have active issues', () => {
-      const result = utils.FilterReposWithIssues([
-        PARSED_REPO_ONE,
-        PARSED_REPO_TWO,
-        PARSED_REPO_THREE
-      ])
-
-      expect(result).toEqual(
-        expect.arrayContaining([PARSED_REPO_TWO, PARSED_REPO_THREE])
-      )
-    })
-  })
-
-  describe('FetchIssues', () => {
-    const repoList = [PARSED_REPO_TWO, PARSED_REPO_THREE]
-
-    beforeEach(() => {
-      global.fetch = MOCK_FETCH_ISSUES as unknown as typeof fetch
-    })
-
-    test('should return a list of repositories with their issues', async () => {
-      const response = await utils.FetchIssues(repoList, {
-        headers: TEST_HEADERS
+        expect(Array.isArray(response)).toBeTrue()
+        expect(response).toEqual([EXPECTED_REPO_TWO, EXPECTED_REPO_THREE])
       })
 
-      expect(Array.isArray(response)).toBeTrue()
-      expect(response).toEqual([EXPECTED_REPO_TWO, EXPECTED_REPO_THREE])
-    })
+      test('should call [fetchUtil] function', async () => {
+        await utils.FetchIssues(repoList, { headers: TEST_HEADERS })
 
-    test('should call [fetchUtil] function', async () => {
-      await utils.FetchIssues(repoList, { headers: TEST_HEADERS })
+        expect(FETCH_UTIL_SPY).toHaveBeenCalledTimes(2)
+      })
 
-      expect(FETCH_UTIL_SPY).toHaveBeenCalledTimes(2)
-    })
+      test('should call [parseIssues]', async () => {
+        await utils.FetchIssues(repoList, { headers: TEST_HEADERS })
 
-    test('should call [parseIssues]', async () => {
-      await utils.FetchIssues(repoList, { headers: TEST_HEADERS })
-
-      expect(PARSE_ISSUES_SPY).toHaveBeenCalledTimes(2)
+        expect(PARSE_ISSUES_SPY).toHaveBeenCalledTimes(2)
+      })
     })
   })
 })

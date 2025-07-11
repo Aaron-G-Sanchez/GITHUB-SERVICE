@@ -33,6 +33,7 @@
       "@interfaces/*": ["./src/interfaces/*"],
       "@middleware/*": ["./src/middleware/*"],
       "@services/*": ["./src/services/*"],
+      "@service-utils/*": ["./src/services/shared/*"],
       "@database/*": ["./src/database/*"],
       "@models/*": ["./src/models/*"],
       "@routes/*": ["./src/routes/*"],

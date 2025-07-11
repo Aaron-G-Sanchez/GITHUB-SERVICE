@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
-import * as util from '@services/populate/utils/github.util'
+import * as util from '@services/shared/util.shared'
 import { PopulateDatabase } from '@services/populate/population.service'
 import { Repository } from '@models/Repository'
 
@@ -167,7 +167,7 @@ const FETCH_ISSUES_SPY = spyOn(util, 'FetchIssues')
 const FILTER_REPOS_SPY = spyOn(util, 'FilterReposWithIssues')
 const MERGE_REPOS_SPY = spyOn(util, 'MergeRepos')
 
-describe('services test suite:', () => {
+describe('Services test suite:', () => {
   let mongoServer: MongoMemoryServer
 
   beforeAll(async () => {

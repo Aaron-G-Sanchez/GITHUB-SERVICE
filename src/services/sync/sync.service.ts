@@ -36,7 +36,6 @@ export const SyncDatabase = async () => {
 
     const mergedRepos = MergeRepos(newRepos, reposWithIssues)
 
-    // TODO: Insert Repos.
     await collections.repositories?.insertMany(mergedRepos)
   } catch (err) {
     client.close()

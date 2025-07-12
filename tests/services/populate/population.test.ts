@@ -1,4 +1,12 @@
-import { describe, test, expect, beforeAll, afterAll, spyOn } from 'bun:test'
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+  spyOn,
+  mock
+} from 'bun:test'
 import { MongoClient } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
@@ -6,6 +14,7 @@ import * as db from '@database/db'
 import * as util from '@services/shared/util.shared'
 import { PopulateDatabase } from '@services/populate/population.service'
 import { Repository } from '@models/Repository'
+import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 
 const MOCK_FETCH_USER_REPOS_RESPONSE: Repository[] = [
   {
@@ -186,11 +195,10 @@ describe('Services test suite:', () => {
 
   afterAll(async () => {
     if (mongoServer) await mongoServer.stop()
-    FETCH_USER_REPOS_SPY.mockRestore()
-    FETCH_ISSUES_SPY.mockRestore()
+    mock.restore()
   })
 
-  describe('db population', () => {
+  describe('db population service', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {
@@ -224,18 +232,3 @@ describe('Services test suite:', () => {
     })
   })
 })
-
-async function MOCK_DB_CONNECTION(
-  server: MongoMemoryServer
-): Promise<MongoClient> {
-  const testClient = await MongoClient.connect(server.getUri())
-
-  const testDatabase = testClient.db()
-
-  const testRepositoriesCollection =
-    testDatabase.collection<Repository>('repositories')
-
-  db.collections.repositories = testRepositoriesCollection
-
-  return Promise.resolve(testClient)
-}

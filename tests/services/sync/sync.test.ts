@@ -102,6 +102,11 @@ const MOCK_FETCH_ISSUES_RESPONSE: Repository[] = [
   }
 ]
 
+const EXPECTED_REPOS: Repository[] = [
+  ...MOCK_INITIAL_SAVED_REPOS,
+  ...MOCK_FETCH_ISSUES_RESPONSE
+]
+
 // Mock functions to stub.
 const DB_CONNECTION_SPY = spyOn(db, 'connect')
 const FETCH_USER_REPOS_SPY = spyOn(util, 'FetchUserRepos')
@@ -182,11 +187,6 @@ describe('Services test suite:', () => {
     })
 
     test('should save new repositories into the db', async () => {
-      const EXPECTED_REPOS: Repository[] = [
-        ...MOCK_INITIAL_SAVED_REPOS,
-        ...MOCK_FETCH_ISSUES_RESPONSE
-      ]
-
       const GOT_REPOS = await db.collections.repositories?.find({}).toArray()
 
       expect(GOT_REPOS?.length).toBe(EXPECTED_REPOS.length)

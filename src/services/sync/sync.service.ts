@@ -8,8 +8,6 @@ import {
   MergeRepos
 } from '@services/shared/util.shared'
 
-// TODO: Create functions to poll the GitHub API for newly created Repos.
-// TODO: Continue logic for adding new repos.
 export const SyncDatabase = async () => {
   const client = await connect()
 

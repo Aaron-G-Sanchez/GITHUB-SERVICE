@@ -2,12 +2,11 @@ import { SyncDatabase } from '@services/sync/sync.service'
 
 SyncDatabase()
   .then((client) => {
-    // TODO: Update when done testing.
-    console.log('TEST COMPLETE')
+    console.log('Database synchronization complete ')
     client.close()
     process.exit(0)
   })
   .catch((err) => {
-    console.error('TEST FAILED:', err)
+    console.error('DB sync failed:', err)
     process.exit(1)
   })

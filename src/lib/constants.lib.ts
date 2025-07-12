@@ -11,6 +11,9 @@ export const REQUEST_HEADERS = {
 export const GITHUB_USER_REPOS_URL =
   'https://api.github.com/user/repos?sort=created&affiliation=owner&per_page=100'
 
+export const GITHUB_NEW_USER_REPOS_URL =
+  'https://api.github.com/user/repos?sort=created&affiliation=owner&since='
+
 export const GITHUB_REPO_ISSUES_URL =
   'https://api.github.com/repos/Aaron-G-Sanchez/'
 

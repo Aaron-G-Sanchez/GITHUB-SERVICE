@@ -6,7 +6,7 @@ import {
   FetchUserRepos,
   FilterReposWithIssues,
   MergeRepos
-} from './utils/github.util'
+} from '@service-utils/util.shared'
 import { connect, collections } from '@database/db'
 
 /**
@@ -16,7 +16,7 @@ import { connect, collections } from '@database/db'
  *
  */
 export const PopulateDatabase = async (): Promise<MongoClient> => {
-  let client = await connect()
+  const client = await connect()
 
   if (client instanceof Error) {
     throw client

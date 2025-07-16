@@ -9,8 +9,8 @@ let TEST_REQUEST: Request
 let TEST_RESPONSE: Response
 let TEST_NEXT: NextFunction
 
-describe('Middleware: [auth] test suite', () => {
-  describe('ValidateToken', () => {
+describe('Middleware test suite:', () => {
+  describe('Auth | ValidateToken', () => {
     beforeEach(() => {
       TEST_REQUEST = {
         headers: {}

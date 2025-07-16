@@ -10,11 +10,11 @@ import {
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
-import * as syncUtils from '@services/sync/utils/sync.util'
-import * as util from '@service-utils/util.shared'
+import * as syncUtils from '@jobs/sync/utils/sync.util'
+import * as util from '@jobs-utils/util.shared'
 import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 import { Repository } from '@models/Repository'
-import { SyncDatabase } from '@services/sync/sync.service'
+import { SyncDatabase } from '@jobs/sync/sync.service'
 import { MongoClient } from 'mongodb'
 
 const MOCK_INITIAL_SAVED_REPOS: Repository[] = [
@@ -119,7 +119,7 @@ const FILTER_NEW_REPOS_SPY = spyOn(syncUtils, 'FilterNewRepos')
 const FILTER_REPOS_WITH_ISSUES_SPY = spyOn(util, 'FilterReposWithIssues')
 const MERGE_REPOS_SPY = spyOn(util, 'MergeRepos')
 
-describe('Services test suite:', () => {
+describe('Jobs test suite:', () => {
   let mongoServer: MongoMemoryServer
 
   beforeAll(async () => {
@@ -143,7 +143,7 @@ describe('Services test suite:', () => {
     mock.restore()
   })
 
-  describe('sync service', () => {
+  describe('sync job', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {

@@ -6,7 +6,7 @@ import {
   FetchUserRepos,
   FilterReposWithIssues,
   MergeRepos
-} from '@service-utils/util.shared'
+} from '@jobs-utils/util.shared'
 import { connect, collections } from '@database/db'
 
 /**

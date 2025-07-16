@@ -6,7 +6,7 @@ import {
   FilterNewRepos,
   GetAllRepoIds,
   GetLastEntry
-} from '@services/sync/utils/sync.util'
+} from '@jobs/sync/utils/sync.util'
 import { Repository } from '@models/Repository'
 
 const MOCK_REPOS = [
@@ -33,7 +33,7 @@ const MOCK_REPO_IDS = [3, 2, 1]
 
 const TEST_KEY_SET = new Set([1, 2])
 
-describe('Services test suite:', () => {
+describe('Jobs test suite:', () => {
   describe('sync utils', () => {
     beforeEach(() => {
       collections.repositories = {

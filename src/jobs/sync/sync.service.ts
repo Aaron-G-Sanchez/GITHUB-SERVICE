@@ -6,7 +6,7 @@ import {
   FetchUserRepos,
   FilterReposWithIssues,
   MergeRepos
-} from '@services/shared/util.shared'
+} from '@jobs/shared/util.shared'
 
 export const SyncDatabase = async () => {
   const client = await connect()

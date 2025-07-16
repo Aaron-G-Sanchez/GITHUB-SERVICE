@@ -11,8 +11,8 @@ import { MongoClient } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
-import * as util from '@services/shared/util.shared'
-import { PopulateDatabase } from '@services/populate/population.service'
+import * as util from '@jobs/shared/util.shared'
+import { PopulateDatabase } from '@jobs/populate/population.service'
 import { Repository } from '@models/Repository'
 import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 
@@ -176,7 +176,7 @@ const FETCH_ISSUES_SPY = spyOn(util, 'FetchIssues')
 const FILTER_REPOS_SPY = spyOn(util, 'FilterReposWithIssues')
 const MERGE_REPOS_SPY = spyOn(util, 'MergeRepos')
 
-describe('Services test suite:', () => {
+describe('Jobs test suite:', () => {
   let mongoServer: MongoMemoryServer
 
   beforeAll(async () => {
@@ -198,7 +198,7 @@ describe('Services test suite:', () => {
     mock.restore()
   })
 
-  describe('db population service', () => {
+  describe('population job', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {

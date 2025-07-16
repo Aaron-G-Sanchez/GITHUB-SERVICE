@@ -234,7 +234,7 @@ const FETCH_UTIL_SPY = spyOn(utils, 'fetchUtil')
 const PARSE_RESPONSE_DATA_SPY = spyOn(utils, 'parseResponseData')
 const PARSE_ISSUES_SPY = spyOn(utils, 'parseIssues')
 
-describe('Service test suite:', () => {
+describe('Jobs test suite:', () => {
   describe('shared utils', () => {
     beforeEach(() => {
       global.fetch = MOCK_FETCH_REPOSITORIES as unknown as typeof fetch

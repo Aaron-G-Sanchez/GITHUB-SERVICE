@@ -119,7 +119,7 @@ const FILTER_NEW_REPOS_SPY = spyOn(syncUtils, 'FilterNewRepos')
 const FILTER_REPOS_WITH_ISSUES_SPY = spyOn(util, 'FilterReposWithIssues')
 const MERGE_REPOS_SPY = spyOn(util, 'MergeRepos')
 
-describe('Services test suite:', () => {
+describe('Jobs test suite:', () => {
   let mongoServer: MongoMemoryServer
 
   beforeAll(async () => {
@@ -143,7 +143,7 @@ describe('Services test suite:', () => {
     mock.restore()
   })
 
-  describe('sync service', () => {
+  describe('sync job', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {

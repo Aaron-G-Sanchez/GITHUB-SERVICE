@@ -176,7 +176,7 @@ const FETCH_ISSUES_SPY = spyOn(util, 'FetchIssues')
 const FILTER_REPOS_SPY = spyOn(util, 'FilterReposWithIssues')
 const MERGE_REPOS_SPY = spyOn(util, 'MergeRepos')
 
-describe('Services test suite:', () => {
+describe('Jobs test suite:', () => {
   let mongoServer: MongoMemoryServer
 
   beforeAll(async () => {
@@ -198,7 +198,7 @@ describe('Services test suite:', () => {
     mock.restore()
   })
 
-  describe('db population service', () => {
+  describe('population job', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {

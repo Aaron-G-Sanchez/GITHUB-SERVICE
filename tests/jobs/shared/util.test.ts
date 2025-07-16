@@ -8,7 +8,7 @@ import {
   beforeEach
 } from 'bun:test'
 
-import * as utils from '@service-utils/util.shared'
+import * as utils from '@jobs-utils/util.shared'
 import { Repository } from '@models/Repository'
 import { Issue } from '@models/Issue'
 

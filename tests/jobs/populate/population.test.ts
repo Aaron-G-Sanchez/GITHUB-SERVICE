@@ -11,8 +11,8 @@ import { MongoClient } from 'mongodb'
 import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
-import * as util from '@services/shared/util.shared'
-import { PopulateDatabase } from '@services/populate/population.service'
+import * as util from '@jobs/shared/util.shared'
+import { PopulateDatabase } from '@jobs/populate/population.service'
 import { Repository } from '@models/Repository'
 import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 

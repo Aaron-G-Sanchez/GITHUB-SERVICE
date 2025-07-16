@@ -6,7 +6,7 @@ import {
   FilterNewRepos,
   GetAllRepoIds,
   GetLastEntry
-} from '@services/sync/utils/sync.util'
+} from '@jobs/sync/utils/sync.util'
 import { Repository } from '@models/Repository'
 
 const MOCK_REPOS = [

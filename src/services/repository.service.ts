@@ -28,7 +28,7 @@ export class RepositoryService {
    * @param id
    * @returns Promise
    */
-  async getRepositoriesById(id: number): Promise<WithId<Repository> | null> {
+  async getRepositoryById(id: number): Promise<WithId<Repository> | null> {
     try {
       const repository = await this.repositoryCollection.findOne({
         gh_id: id

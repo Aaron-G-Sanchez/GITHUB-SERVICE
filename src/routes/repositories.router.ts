@@ -34,7 +34,7 @@ export const CreateRepositoryRouter = (
     }
 
     try {
-      const repo = await repositoriesService.getRepositoriesById(id)
+      const repo = await repositoriesService.getRepositoryById(id)
 
       if (!repo) {
         res.status(404).json({ msg: `No resource for given id: ${id}` })
@@ -43,7 +43,9 @@ export const CreateRepositoryRouter = (
 
       res.status(200).json({ repo })
     } catch (err) {
-      res.status(500).json(err)
+      const message =
+        err instanceof Error ? err.message : 'Error fetching repositories'
+      res.status(500).send({ error: message })
     }
   })
 

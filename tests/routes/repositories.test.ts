@@ -55,16 +55,25 @@ const MOCK_REPO_TWO = {
 
 const MOCK_REPO_LIST = [MOCK_REPO_ONE, MOCK_REPO_TWO]
 
-const MOCK_GET_REPOSITORIES_ERROR = new Error('Error fetching repositories')
+const GET_REPOSITORIES_ERROR = new Error('Error fetching repositories')
+const INVALID_STRING_ERROR = new Error('Invalid or missing ID')
+const NO_RESOURCE_FOR_PROVIDED_ID_ERROR = new Error(
+  'No resource for given id: 123456'
+)
 
-const MOCK_SUCCESS_REPOSITORY_SERVICE = {
+// TODO: Make a helper function simplify service creation.
+const MOCK_REPOSITORY_SERVICE = {
   getRepositories: mock().mockResolvedValue(MOCK_REPO_LIST),
   getRepositoryById: mock().mockResolvedValue(MOCK_REPO_ONE)
 } as unknown as RepositoryService
 
-const MOCK_ERROR_REPOSITORY_SERVICE = {
-  getRepositories: () => Promise.reject(MOCK_GET_REPOSITORIES_ERROR),
-  getRepositoryById: () => Promise.reject(MOCK_GET_REPOSITORIES_ERROR)
+const MOCK_REPOSITORY_SERVICE_NO_REPO_ID = {
+  getRepositoryById: mock().mockResolvedValue(null)
+} as unknown as RepositoryService
+
+const MOCK_REPOSITORY_SERVICE_WITH_ERRORS = {
+  getRepositories: () => Promise.reject(GET_REPOSITORIES_ERROR),
+  getRepositoryById: () => Promise.reject(GET_REPOSITORIES_ERROR)
 } as unknown as RepositoryService
 
 describe('Routes test suite: ', () => {
@@ -73,7 +82,7 @@ describe('Routes test suite: ', () => {
       let server: Express
 
       beforeEach(() => {
-        server = CreateServer(MOCK_SUCCESS_REPOSITORY_SERVICE)
+        server = CreateServer(MOCK_REPOSITORY_SERVICE)
       })
 
       test('[GET] /repos should return a list of repositories', async () => {
@@ -95,30 +104,63 @@ describe('Routes test suite: ', () => {
       })
     })
 
-    // TODO: Add an error check to validate parsing of :id param.
     describe('error responses', () => {
-      let server: Express
+      describe('500 server failures', () => {
+        let server: Express
 
-      beforeEach(() => {
-        server = CreateServer(MOCK_ERROR_REPOSITORY_SERVICE)
+        beforeEach(() => {
+          server = CreateServer(MOCK_REPOSITORY_SERVICE_WITH_ERRORS)
+        })
+
+        test('[GET] /repos should respond with proper error response when error is thrown', async () => {
+          const res = await request(server)
+            .get('/api/v1/repos')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(500)
+
+          expect(res.body).toEqual({
+            error: GET_REPOSITORIES_ERROR.message
+          })
+        })
+
+        test('[GET] /repos/:id should respond with proper error response when error is thrown', async () => {
+          const res = await request(server)
+            .get('/api/v1/repos/999')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(500)
+
+          expect(res.body).toEqual({
+            error: GET_REPOSITORIES_ERROR.message
+          })
+        })
       })
 
-      test('[GET] /repos should respond with proper error response when error is thrown', async () => {
-        const res = await request(server)
-          .get('/api/v1/repos')
-          .set('Authorization', 'Bearer test-secret')
-          .expect(500)
+      describe('other failures', () => {
+        let server: Express
 
-        expect(res.body).toEqual({ error: MOCK_GET_REPOSITORIES_ERROR.message })
-      })
+        test('[GET] /repos/:id should respond with 400 when id param is not a number', async () => {
+          server = CreateServer(MOCK_REPOSITORY_SERVICE)
 
-      test('[GET] /repos/:id should respond with proper error response when error is thrown', async () => {
-        const res = await request(server)
-          .get('/api/v1/repos/999')
-          .set('Authorization', 'Bearer test-secret')
-          .expect(500)
+          const res = await request(server)
+            .get('/api/v1/repos/abc')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(400)
 
-        expect(res.body).toEqual({ error: MOCK_GET_REPOSITORIES_ERROR.message })
+          expect(res.body).toEqual({ error: INVALID_STRING_ERROR.message })
+        })
+
+        test('[GET] /repos/:id should respond with 404 if no repo with provided id exists', async () => {
+          server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_REPO_ID)
+
+          const res = await request(server)
+            .get('/api/v1/repos/123456')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(404)
+
+          expect(res.body).toEqual({
+            error: NO_RESOURCE_FOR_PROVIDED_ID_ERROR.message
+          })
+        })
       })
     })
   })

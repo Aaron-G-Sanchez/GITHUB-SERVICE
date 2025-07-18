@@ -2,6 +2,7 @@ import { Request, Response, Router, json } from 'express'
 
 import { RepositoryService } from '@services/repository.service'
 
+// TODO: Remove explicit error handling from all routes.
 export const CreateRepositoryRouter = (
   repositoriesService: RepositoryService
 ): Router => {
@@ -11,7 +12,6 @@ export const CreateRepositoryRouter = (
 
   repositoriesRouter.get('/', async (_req: Request, res: Response) => {
     try {
-      // TODO: Move to separate services directory.
       const repos = await repositoriesService.getRepositories()
 
       res.status(200).send({ repos })
@@ -23,7 +23,6 @@ export const CreateRepositoryRouter = (
   })
 
   repositoriesRouter.get('/:id', async (req: Request, res: Response) => {
-    // TODO: Move to separate directory.
     const idParam = req.params.id
 
     const id = parseInt(idParam)
@@ -37,7 +36,7 @@ export const CreateRepositoryRouter = (
       const repo = await repositoriesService.getRepositoryById(id)
 
       if (!repo) {
-        res.status(404).json({ msg: `No resource for given id: ${id}` })
+        res.status(404).json({ error: `No resource for given id: ${id}` })
         return
       }
 

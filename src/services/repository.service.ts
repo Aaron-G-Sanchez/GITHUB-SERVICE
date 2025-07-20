@@ -8,6 +8,7 @@ export class RepositoryService {
     this.repositoryCollection = collections
   }
 
+  // TODO: Add unit tests for these methods.
   /**
    * Returns a list of Repositories.
    *
@@ -32,6 +33,26 @@ export class RepositoryService {
     try {
       const repository = await this.repositoryCollection.findOne({
         gh_id: id
+      })
+
+      return repository
+    } catch (err) {
+      throw new Error('Error fetching repositories')
+    }
+  }
+
+  /**
+   * Returns a single Repository or null if no repository exists with the provided repository name.
+   *
+   * @param repositoryName
+   * @returns Promise
+   */
+  async getRepositoryByFullName(
+    repositoryName: string
+  ): Promise<WithId<Repository> | null> {
+    try {
+      const repository = await this.repositoryCollection.findOne({
+        full_name: repositoryName
       })
 
       return repository

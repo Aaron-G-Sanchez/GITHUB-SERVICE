@@ -22,6 +22,13 @@ export const CreateRepositoryRouter = (
     }
   })
 
+  // TODO: Complete route implementation.
+  repositoriesRouter.get('/search', (req: Request, res: Response) => {
+    const nameParam = req.query.full_name as string | undefined
+
+    res.status(200).json({ msg: nameParam })
+  })
+
   repositoriesRouter.get('/:id', async (req: Request, res: Response) => {
     const idParam = req.params.id
 

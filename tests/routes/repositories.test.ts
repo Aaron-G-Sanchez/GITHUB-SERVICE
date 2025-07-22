@@ -56,6 +56,10 @@ const MOCK_REPO_TWO = {
 const MOCK_REPO_LIST = [MOCK_REPO_ONE, MOCK_REPO_TWO]
 
 const GET_REPOSITORIES_ERROR = new Error('Error fetching repositories')
+const INVALID_SEARCH_PARAM = new Error('Invalid or missing repository name')
+const NO_RESOURCE_FOR_PROVIDED_FULL_NAME_ERROR = new Error(
+  'No resource for given name: user/Fake-Repo'
+)
 const INVALID_STRING_ERROR = new Error('Invalid or missing ID')
 const NO_RESOURCE_FOR_PROVIDED_ID_ERROR = new Error(
   'No resource for given id: 123456'
@@ -68,8 +72,9 @@ const MOCK_REPOSITORY_SERVICE = {
   getRepositoryByFullName: mock().mockResolvedValue(MOCK_REPO_TWO)
 } as unknown as RepositoryService
 
-const MOCK_REPOSITORY_SERVICE_NO_REPO_ID = {
-  getRepositoryById: mock().mockResolvedValue(null)
+const MOCK_REPOSITORY_SERVICE_NO_RESOURCE = {
+  getRepositoryById: mock().mockResolvedValue(null),
+  getRepositoryByFullName: mock().mockResolvedValue(null)
 } as unknown as RepositoryService
 
 const MOCK_REPOSITORY_SERVICE_WITH_ERRORS = {
@@ -87,31 +92,37 @@ describe('Routes test suite: ', () => {
         server = CreateServer(MOCK_REPOSITORY_SERVICE)
       })
 
-      test('[GET] /repos should return a list of repositories', async () => {
-        const res = await request(server)
-          .get('/api/v1/repos')
-          .set('Authorization', 'Bearer test-secret')
-          .expect(200)
+      describe('[GET] /repos', () => {
+        test('should return a list of repositories', async () => {
+          const res = await request(server)
+            .get('/api/v1/repos')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(200)
 
-        expect(res.body).toEqual({ repos: [MOCK_REPO_ONE, MOCK_REPO_TWO] })
+          expect(res.body).toEqual({ repos: [MOCK_REPO_ONE, MOCK_REPO_TWO] })
+        })
       })
 
-      test('[GET] /repos/:id should return a single repo instance', async () => {
-        const res = await request(server)
-          .get('/api/v1/repos/123456')
-          .set('Authorization', 'Bearer test-secret')
-          .expect(200)
+      describe('[GET] /repos/:id', () => {
+        test('should return a single repo instance', async () => {
+          const res = await request(server)
+            .get('/api/v1/repos/123456')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(200)
 
-        expect(res.body).toEqual({ repo: MOCK_REPO_ONE })
+          expect(res.body).toEqual({ repo: MOCK_REPO_ONE })
+        })
       })
 
-      test('TEST HERE', async () => {
-        const res = await request(server)
-          .get('/api/v1/repos/search?full_name=user/Test-Repo-Two')
-          .set('Authorization', 'Bearer test-secret')
-          .expect(200)
+      describe('[GET] /search?full_name', () => {
+        test('should return a single repo instance', async () => {
+          const res = await request(server)
+            .get('/api/v1/repos/search?full_name=user%2FTest-Repo-Two')
+            .set('Authorization', 'Bearer test-secret')
+            .expect(200)
 
-        expect(res.body).toEqual({ repo: MOCK_REPO_TWO })
+          expect(res.body).toEqual({ repo: MOCK_REPO_TWO })
+        })
       })
     })
 
@@ -123,25 +134,42 @@ describe('Routes test suite: ', () => {
           server = CreateServer(MOCK_REPOSITORY_SERVICE_WITH_ERRORS)
         })
 
-        test('[GET] /repos should respond with proper error response when error is thrown', async () => {
-          const res = await request(server)
-            .get('/api/v1/repos')
-            .set('Authorization', 'Bearer test-secret')
-            .expect(500)
+        describe('[GET] /repos', () => {
+          test('should respond with proper error response when error is thrown', async () => {
+            const res = await request(server)
+              .get('/api/v1/repos')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(500)
 
-          expect(res.body).toEqual({
-            error: GET_REPOSITORIES_ERROR.message
+            expect(res.body).toEqual({
+              error: GET_REPOSITORIES_ERROR.message
+            })
           })
         })
 
-        test('[GET] /repos/:id should respond with proper error response when error is thrown', async () => {
-          const res = await request(server)
-            .get('/api/v1/repos/999')
-            .set('Authorization', 'Bearer test-secret')
-            .expect(500)
+        describe('[GET] /repos:id', () => {
+          test('should respond with proper error response when error is thrown', async () => {
+            const res = await request(server)
+              .get('/api/v1/repos/999')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(500)
 
-          expect(res.body).toEqual({
-            error: GET_REPOSITORIES_ERROR.message
+            expect(res.body).toEqual({
+              error: GET_REPOSITORIES_ERROR.message
+            })
+          })
+        })
+
+        describe('[GET] /repos/search?full_name', () => {
+          test('should respond with proper error response when error is thrown', async () => {
+            const res = await request(server)
+              .get('/api/v1/repos/search?full_name=user%2FTest-Repo_Two')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(500)
+
+            expect(res.body).toEqual({
+              error: GET_REPOSITORIES_ERROR.message
+            })
           })
         })
       })
@@ -149,27 +177,57 @@ describe('Routes test suite: ', () => {
       describe('other failures', () => {
         let server: Express
 
-        test('[GET] /repos/:id should respond with 400 when id param is not a number', async () => {
-          server = CreateServer(MOCK_REPOSITORY_SERVICE)
+        describe('[GET] /repos/:id', () => {
+          test('should respond with 400 when id param is not a number', async () => {
+            server = CreateServer(MOCK_REPOSITORY_SERVICE)
 
-          const res = await request(server)
-            .get('/api/v1/repos/abc')
-            .set('Authorization', 'Bearer test-secret')
-            .expect(400)
+            const res = await request(server)
+              .get('/api/v1/repos/abc')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(400)
 
-          expect(res.body).toEqual({ error: INVALID_STRING_ERROR.message })
+            expect(res.body).toEqual({ error: INVALID_STRING_ERROR.message })
+          })
+
+          test('should respond with 404 if no repo with provided id exists', async () => {
+            server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_RESOURCE)
+
+            const res = await request(server)
+              .get('/api/v1/repos/123456')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(404)
+
+            expect(res.body).toEqual({
+              error: NO_RESOURCE_FOR_PROVIDED_ID_ERROR.message
+            })
+          })
         })
 
-        test('[GET] /repos/:id should respond with 404 if no repo with provided id exists', async () => {
-          server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_REPO_ID)
+        describe('[GET] /search?full_name=', () => {
+          test('should respond with 400 when no search param is provided', async () => {
+            server = CreateServer(MOCK_REPOSITORY_SERVICE)
 
-          const res = await request(server)
-            .get('/api/v1/repos/123456')
-            .set('Authorization', 'Bearer test-secret')
-            .expect(404)
+            const res = await request(server)
+              .get('/api/v1/repos/search')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(400)
 
-          expect(res.body).toEqual({
-            error: NO_RESOURCE_FOR_PROVIDED_ID_ERROR.message
+            expect(res.body).toEqual({
+              error: INVALID_SEARCH_PARAM.message
+            })
+          })
+
+          test('should respond with 404 when no repository matches search param provided', async () => {
+            server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_RESOURCE)
+
+            const res = await request(server)
+              .get('/api/v1/repos/search?full_name=user%2FFake-Repo')
+              .set('Authorization', 'Bearer test-secret')
+              .expect(404)
+
+            expect(res.body).toEqual({
+              error: NO_RESOURCE_FOR_PROVIDED_FULL_NAME_ERROR.message
+            })
           })
         })
       })

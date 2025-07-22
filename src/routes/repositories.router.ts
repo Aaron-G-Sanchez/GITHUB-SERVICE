@@ -27,7 +27,7 @@ export const CreateRepositoryRouter = (
     const nameParam = req.query.full_name as string | undefined
 
     if (!nameParam) {
-      res.status(400).send({ error: 'Invalid or missing repository name.' })
+      res.status(400).send({ error: 'Invalid or missing repository name' })
       return
     }
 

@@ -22,7 +22,6 @@ export const CreateRepositoryRouter = (
     }
   })
 
-  // TODO: Test route.
   repositoriesRouter.get('/search', async (req: Request, res: Response) => {
     const nameParam = req.query.full_name as string | undefined
 

@@ -22,6 +22,32 @@ export const CreateRepositoryRouter = (
     }
   })
 
+  repositoriesRouter.get('/search', async (req: Request, res: Response) => {
+    const nameParam = req.query.full_name as string | undefined
+
+    if (!nameParam) {
+      res.status(400).send({ error: 'Invalid or missing repository name' })
+      return
+    }
+
+    try {
+      const repo = await repositoriesService.getRepositoryByFullName(nameParam)
+
+      if (!repo) {
+        res
+          .status(404)
+          .send({ error: `No resource for given name: ${nameParam}` })
+        return
+      }
+
+      res.status(200).json({ repo })
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Error fetching repository'
+      res.status(500).send({ error: message })
+    }
+  })
+
   repositoriesRouter.get('/:id', async (req: Request, res: Response) => {
     const idParam = req.params.id
 

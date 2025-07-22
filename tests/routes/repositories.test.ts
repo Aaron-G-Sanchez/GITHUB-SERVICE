@@ -64,7 +64,8 @@ const NO_RESOURCE_FOR_PROVIDED_ID_ERROR = new Error(
 // TODO: Make a helper function simplify service creation.
 const MOCK_REPOSITORY_SERVICE = {
   getRepositories: mock().mockResolvedValue(MOCK_REPO_LIST),
-  getRepositoryById: mock().mockResolvedValue(MOCK_REPO_ONE)
+  getRepositoryById: mock().mockResolvedValue(MOCK_REPO_ONE),
+  getRepositoryByFullName: mock().mockResolvedValue(MOCK_REPO_TWO)
 } as unknown as RepositoryService
 
 const MOCK_REPOSITORY_SERVICE_NO_REPO_ID = {
@@ -73,7 +74,8 @@ const MOCK_REPOSITORY_SERVICE_NO_REPO_ID = {
 
 const MOCK_REPOSITORY_SERVICE_WITH_ERRORS = {
   getRepositories: () => Promise.reject(GET_REPOSITORIES_ERROR),
-  getRepositoryById: () => Promise.reject(GET_REPOSITORIES_ERROR)
+  getRepositoryById: () => Promise.reject(GET_REPOSITORIES_ERROR),
+  getRepositoryByFullName: () => Promise.reject(GET_REPOSITORIES_ERROR)
 } as unknown as RepositoryService
 
 describe('Routes test suite: ', () => {
@@ -101,6 +103,15 @@ describe('Routes test suite: ', () => {
           .expect(200)
 
         expect(res.body).toEqual({ repo: MOCK_REPO_ONE })
+      })
+
+      test('TEST HERE', async () => {
+        const res = await request(server)
+          .get('/api/v1/repos/search?full_name=user/Test-Repo-Two')
+          .set('Authorization', 'Bearer test-secret')
+          .expect(200)
+
+        expect(res.body).toEqual({ repo: MOCK_REPO_TWO })
       })
     })
 

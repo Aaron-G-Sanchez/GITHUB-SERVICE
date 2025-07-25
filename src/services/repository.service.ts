@@ -60,4 +60,9 @@ export class RepositoryService {
       throw new Error('Error fetching repositories')
     }
   }
+
+  async addIssue(repositoryName: string) {
+    // Find the repo needing to be updated.
+    // Add issue (push to issue array)
+  }
 }

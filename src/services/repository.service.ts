@@ -1,3 +1,4 @@
+import { Issue } from '@models/Issue'
 import { Repository } from '@models/Repository'
 import { Collection, WithId } from 'mongodb'
 
@@ -58,6 +59,26 @@ export class RepositoryService {
       return repository
     } catch (err) {
       throw new Error('Error fetching repositories')
+    }
+  }
+
+  /**
+   * Adds an issue to the provided repositories issue list.
+   *
+   *
+   * @param issue - The new issue to add to a repository.
+   * @param repositoryIdentifiers - The identifiers used to find the repository to be updated.
+   */
+  async addIssue(
+    issue: Issue,
+    repositoryIdentifiers: Pick<Repository, 'gh_id' | 'full_name'>
+  ) {
+    const query = { gh_id: repositoryIdentifiers.gh_id }
+    const update = { $push: { issues: issue }, $inc: { open_issues_count: 1 } }
+    try {
+      await this.repositoryCollection.updateOne(query, update)
+    } catch (err) {
+      throw new Error('Error adding issue to repository')
     }
   }
 }

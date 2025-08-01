@@ -1,3 +1,4 @@
+import { Issue } from '@models/Issue'
 import { Repository } from '@models/Repository'
 import { Collection, WithId } from 'mongodb'
 
@@ -61,8 +62,20 @@ export class RepositoryService {
     }
   }
 
-  async addIssue(repositoryName: string) {
+  /**
+   * Adds an issue to the provided repositories issue list.
+   *
+   *
+   * @param issue
+   * @param repositoryIdentifiers
+   */
+  async addIssue(
+    issue: Issue,
+    repositoryIdentifiers: Pick<Repository, 'gh_id' | 'full_name'>
+  ) {
     // Find the repo needing to be updated.
     // Add issue (push to issue array)
+    console.log('issue: ', issue)
+    console.log('Repo ids: ', repositoryIdentifiers)
   }
 }

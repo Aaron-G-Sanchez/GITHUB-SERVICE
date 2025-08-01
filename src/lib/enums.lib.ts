@@ -1,4 +1,4 @@
-/** Issue Action Enums */
+/** GitHub Action Enums */
 export enum GithubAction {
   Opened = 'opened',
   Closed = 'closed',

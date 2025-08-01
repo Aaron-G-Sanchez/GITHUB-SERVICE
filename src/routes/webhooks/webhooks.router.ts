@@ -2,6 +2,8 @@ import { Request, Response, Router, json } from 'express'
 
 import { RepositoryService } from '@base/services/repository.service'
 import { GithubAction } from '@library/enums.lib'
+import { Issue } from '@models/Issue'
+import { Repository } from '@models/Repository'
 
 export const CreateWebhookRouter = (
   repositoryService: RepositoryService
@@ -12,33 +14,39 @@ export const CreateWebhookRouter = (
 
   webhookRouter.post('/', async (req: Request, res: Response) => {
     // TODO: Authenticate request.
-    const { action } = req.body
+    const { action, issue, repository } = req.body
 
-    // TODO: Implement route.
+    // TODO: Implement logic to add an issue.
     if (!validateAction(action)) {
       res.status(400).send({ error: 'Missing or incorrect action' })
       return
     }
 
+    if (!issue || !repository) {
+      res.status(400).send({ error: 'Missing issue or repository' })
+      return
+    }
+
+    // TODO: Implement cases for other actions. [edited, deleted, closed]
     switch (action) {
       case GithubAction.Opened:
-        console.log('OPENED')
-        break
-      case GithubAction.Closed:
-        console.log('CLOSED')
-        break
-      case GithubAction.Deleted:
-        console.log('DELETED')
-        break
-      case GithubAction.Edited:
-        console.log('EDITED')
+        // TODO: Implement this handler.
+        const issueMapping = createIssueMapping(issue)
+        const repositoryIdentifiers = getRepositoryIdentifiers(repository)
+        try {
+          repositoryService.addIssue(issueMapping, repositoryIdentifiers)
+        } catch (err) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : 'Error adding issue to repository'
+          res.status(500).send({ error: message })
+        }
         break
       default:
-        break
+        res.status(200).send({ msg: 'ok; action not implemented' })
+        return
     }
-    // Parse out the issue details that need to be added (name, url, etc)
-    // Find the parent repo by gh_id
-    // Push the issue into the parent repos `issues` list
 
     res.status(200).send({ msg: 'ok' })
   })
@@ -48,6 +56,25 @@ export const CreateWebhookRouter = (
 
 // TODO: Move to separate directory.
 const validateAction = (action: string) => {
-  console.log(action)
   return Object.values(GithubAction).includes(action as GithubAction)
+}
+
+const createIssueMapping = (rawIssue: any): Issue => {
+  return {
+    gh_id: rawIssue.id,
+    number: rawIssue.number,
+    state: rawIssue.state,
+    title: rawIssue.title,
+    body: rawIssue.body,
+    repository_url: rawIssue.repository_url
+  }
+}
+
+const getRepositoryIdentifiers = (
+  rawRepository: any
+): Pick<Repository, 'gh_id' | 'full_name'> => {
+  return {
+    gh_id: rawRepository.id,
+    full_name: rawRepository.name
+  }
 }

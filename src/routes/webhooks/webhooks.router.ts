@@ -16,7 +16,6 @@ export const CreateWebhookRouter = (
     // TODO: Authenticate request.
     const { action, issue, repository } = req.body
 
-    // TODO: Implement logic to add an issue.
     if (!validateAction(action)) {
       res.status(400).send({ error: 'Missing or incorrect action' })
       return
@@ -33,7 +32,7 @@ export const CreateWebhookRouter = (
         const issueMapping = createIssueMapping(issue)
         const repositoryIdentifiers = getRepositoryIdentifiers(repository)
         try {
-          repositoryService.addIssue(issueMapping, repositoryIdentifiers)
+          await repositoryService.addIssue(issueMapping, repositoryIdentifiers)
         } catch (err) {
           const message =
             err instanceof Error

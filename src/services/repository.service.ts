@@ -66,8 +66,8 @@ export class RepositoryService {
    * Adds an issue to the provided repositories issue list.
    *
    *
-   * @param issue
-   * @param repositoryIdentifiers
+   * @param issue - The new issue to add to a repository.
+   * @param repositoryIdentifiers - The identifiers used to find the repository to be updated.
    */
   async addIssue(
     issue: Issue,

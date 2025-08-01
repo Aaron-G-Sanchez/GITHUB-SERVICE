@@ -30,7 +30,6 @@ export const CreateWebhookRouter = (
     // TODO: Implement cases for other actions. [edited, deleted, closed]
     switch (action) {
       case GithubAction.Opened:
-        // TODO: Implement this handler.
         const issueMapping = createIssueMapping(issue)
         const repositoryIdentifiers = getRepositoryIdentifiers(repository)
         try {

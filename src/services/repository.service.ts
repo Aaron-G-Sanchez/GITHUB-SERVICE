@@ -73,9 +73,12 @@ export class RepositoryService {
     issue: Issue,
     repositoryIdentifiers: Pick<Repository, 'gh_id' | 'full_name'>
   ) {
-    // Find the repo needing to be updated.
-    // Add issue (push to issue array)
-    console.log('issue: ', issue)
-    console.log('Repo ids: ', repositoryIdentifiers)
+    const query = { gh_id: repositoryIdentifiers.gh_id }
+    const update = { $push: { issues: issue }, $inc: { open_issues_count: 1 } }
+    try {
+      await this.repositoryCollection.updateOne(query, update)
+    } catch (err) {
+      throw new Error('Error adding issue to repository')
+    }
   }
 }

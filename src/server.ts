@@ -4,12 +4,12 @@ import morgan from 'morgan'
 import { ValidateToken } from '@middleware/auth/verifyToken'
 import { config } from '@config/config.config'
 import { RepositoryService } from './services/repository.service'
-import { CreateRepositoryRouter } from '@routes/repositories.router'
-import { CreateWebhookRouter } from '@routes/webhooks.router'
+import { CreateRepositoryRouter } from '@routes/repositories/repositories.router'
+import { CreateWebhookRouter } from '@routes/webhooks/webhooks.router'
 
 export const CreateServer = (repositoryService: RepositoryService) => {
   const repositoriesRouter = CreateRepositoryRouter(repositoryService)
-  const webhookRouter = CreateWebhookRouter()
+  const webhookRouter = CreateWebhookRouter(repositoryService)
 
   const server: Express = express()
 

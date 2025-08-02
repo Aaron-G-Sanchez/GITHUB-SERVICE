@@ -51,7 +51,7 @@ export const FetchIssues = async (
 ): Promise<Repository[]> => {
   // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
-    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100`
+    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
 
     const repoIssues = await fetchUtil(endpoint, options)
 

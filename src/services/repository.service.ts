@@ -63,7 +63,7 @@ export class RepositoryService {
   }
 
   /**
-   * Adds an issue to the provided repositories issue list.
+   * Adds an issue to the provided repositories issue list when an issue is opened in GitHub.
    *
    *
    * @param issue - The new issue to add to a repository.
@@ -80,5 +80,13 @@ export class RepositoryService {
     } catch (err) {
       throw new Error('Error adding issue to repository')
     }
+  }
+
+  /**
+   * Modifies the issue state for a given issue when the issue has been closed.
+   *
+   */
+  async closeIssue() {
+    console.log('CLOSED!')
   }
 }

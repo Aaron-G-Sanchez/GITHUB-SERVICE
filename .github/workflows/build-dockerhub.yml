@@ -1,0 +1,23 @@
+name: Docker Hub - Build and Push
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish:
+    name: publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t cycle12/github-service:latest .
+
+      - name: Push to Docker Hub
+        run: |
+          docker login -u cycle12 -p ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          docker push cycle12/github-service:latest

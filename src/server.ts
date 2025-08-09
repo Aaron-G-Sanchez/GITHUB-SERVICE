@@ -21,6 +21,14 @@ export const CreateServer = (repositoryService: RepositoryService) => {
   )
 
   //** OPEN ROUTES. */
+  server.get('/', (_req: Request, res: Response) => {
+    res.status(200).send({ status: 'ok' })
+  })
+
+  server.get('/health-check', (_req: Request, res: Response) => {
+    res.status(200).send({ status: 'alive' })
+  })
+
   server.get('/api/v1/hello-world', (_req: Request, res: Response) => {
     res.status(200).json({ msg: 'Hello, World!' })
   })

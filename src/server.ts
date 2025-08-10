@@ -41,10 +41,11 @@ export const CreateServer = (repositoryService: RepositoryService) => {
 
   //** FALLBACK ROUTE */
   server.use((req: Request, res: Response) => {
-    // TODO: Remove from test environment logs.
-    console.warn(`Unknown route: ${req.url} from ${req.ip}`)
+    if (config.environment !== 'test') {
+      console.warn(`Unknown route: ${req.url} from ${req.ip}`)
+    }
 
-    res.status(404).send({ message: 'Not found' })
+    res.status(404).json({ error: 'Not found' })
   })
 
   return server

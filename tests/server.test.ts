@@ -46,4 +46,16 @@ describe('CreateServer test suite:', () => {
       expect(res.status).toBe(400)
     })
   })
+
+  describe('Fallback router', () => {
+    test('[GET] unknown route should return 404 not found', async () => {
+      const res = await request(server).get('/unknown-route').expect(404)
+      expect(res.body).toEqual({ message: 'Not found' })
+    })
+
+    test('[POST] unknown route should return 404 not found', async () => {
+      const res = await request(server).post('/route/not/defined').expect(404)
+      expect(res.body).toEqual({ message: 'Not found' })
+    })
+  })
 })

@@ -21,14 +21,32 @@ export const CreateServer = (repositoryService: RepositoryService) => {
   )
 
   //** OPEN ROUTES. */
+  server.get('/', (_req: Request, res: Response) => {
+    res.status(200).send({ status: 'ok' })
+  })
+
+  server.get('/health-check', (_req: Request, res: Response) => {
+    res.status(200).send({ status: 'alive' })
+  })
+
+  // TODO: Delete.
   server.get('/api/v1/hello-world', (_req: Request, res: Response) => {
     res.status(200).json({ msg: 'Hello, World!' })
   })
+
   server.use('/api/v1/webhooks', webhookRouter)
 
   //** PROTECTED ROUTES. */
-  server.use(ValidateToken)
-  server.use('/api/v1/repos', repositoriesRouter)
+  server.use('/api/v1/repos', ValidateToken, repositoriesRouter)
+
+  //** FALLBACK ROUTE */
+  server.use((req: Request, res: Response) => {
+    if (config.environment !== 'test') {
+      console.warn(`Unknown route: ${req.url} from ${req.ip}`)
+    }
+
+    res.status(404).json({ error: 'Not found' })
+  })
 
   return server
 }

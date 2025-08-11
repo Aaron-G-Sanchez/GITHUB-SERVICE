@@ -95,7 +95,10 @@ export class RepositoryService {
     const query = {
       gh_id: repositoryIdentifiers.gh_id
     }
-    const update = { $set: { 'issues.$[i].state': 'closed' } }
+    const update = {
+      $set: { 'issues.$[i].state': 'closed' },
+      $inc: { open_issues_count: -1 }
+    }
     const options = {
       arrayFilters: [
         {

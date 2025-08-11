@@ -85,8 +85,29 @@ export class RepositoryService {
   /**
    * Modifies the issue state for a given issue when the issue has been closed.
    *
+   * @param issue = The id of the issue to be updated.
+   * @param repositoryIdentifiers - The identifiers used to find the repository to be updated.
    */
-  async closeIssue() {
-    console.log('CLOSED!')
+  async closeIssue(
+    issueId: number,
+    repositoryIdentifiers: Pick<Repository, 'gh_id' | 'full_name'>
+  ) {
+    const query = {
+      gh_id: repositoryIdentifiers.gh_id
+    }
+    const update = { $set: { 'issues.$[i].state': 'closed' } }
+    const options = {
+      arrayFilters: [
+        {
+          'i.gh_id': issueId
+        }
+      ]
+    }
+
+    try {
+      await this.repositoryCollection.updateOne(query, update, options)
+    } catch (error) {
+      throw new Error(`Error closing issue: ${issueId}`)
+    }
   }
 }

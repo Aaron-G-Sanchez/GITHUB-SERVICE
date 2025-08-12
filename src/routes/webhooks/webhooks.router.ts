@@ -26,7 +26,7 @@ export const CreateWebhookRouter = (
       return
     }
 
-    // TODO: Implement cases for other actions. [edited, deleted, closed]
+    // TODO: Implement cases for other actions. [edited, deleted]
     switch (action) {
       case GithubAction.Opened: {
         const issueMapping = createIssueMapping(issue)
@@ -50,7 +50,9 @@ export const CreateWebhookRouter = (
           await repositoryService.closeIssue(gh_id, repositoryIdentifiers)
         } catch (error) {
           const message =
-            error instanceof Error ? error.message : 'Error closing'
+            error instanceof Error
+              ? error.message
+              : `Error closing issue: ${gh_id}`
           res.status(500).send({ error: message })
           return
         }

@@ -27,8 +27,14 @@ const MOCK_REPOSITORY = {
   created_at: '2025-06-26T23:05:15Z'
 }
 
+// TODO: Rename to make usage clearer. eg. MOCK_ADD_ISSUE_REQUEST
 const MOCK_WEBHOOK_REQUEST = {
   action: GithubAction.Opened,
+  issue: MOCK_ISSUE,
+  repository: MOCK_REPOSITORY
+}
+const MOCK_CLOSE_ISSUE_WEBHOOK_REQUEST = {
+  action: GithubAction.Closed,
   issue: MOCK_ISSUE,
   repository: MOCK_REPOSITORY
 }
@@ -59,15 +65,17 @@ const MISSING_OR_INCORRECT_GITHUB_ACTION_ERROR = new Error(
 const MISSING_ISSUE_OR_REPOSITORY_ERROR = new Error(
   'Missing issue or repository'
 )
-
 const ADD_ISSUES_ERROR = new Error('Error adding issue to repository')
+const CLOSE_ISSUE_ERROR = new Error('Error closing issue: 1111')
 
 const MOCK_REPOSITORY_SERVICE = {
-  addIssue: mock()
+  addIssue: mock(),
+  closeIssue: mock()
 } as unknown as RepositoryService
 
 const MOCK_REPOSITORY_SERVICE_WITH_ERRORS = {
-  addIssue: () => Promise.reject(ADD_ISSUES_ERROR)
+  addIssue: () => Promise.reject(ADD_ISSUES_ERROR),
+  closeIssue: () => Promise.reject(CLOSE_ISSUE_ERROR)
 } as unknown as RepositoryService
 
 describe('Routes test suite:', () => {
@@ -84,6 +92,15 @@ describe('Routes test suite:', () => {
           const res = await request(server)
             .post('/api/v1/webhooks')
             .send(MOCK_WEBHOOK_REQUEST)
+            .expect(200)
+
+          expect(res.body).toEqual(MOCK_SUCCESS_RESPONSE)
+        })
+
+        test('should respond with 200 when issue is closed', async () => {
+          const res = await request(server)
+            .post('/api/v1/webhooks')
+            .send(MOCK_CLOSE_ISSUE_WEBHOOK_REQUEST)
             .expect(200)
 
           expect(res.body).toEqual(MOCK_SUCCESS_RESPONSE)
@@ -154,6 +171,7 @@ describe('Routes test suite:', () => {
         })
 
         describe('[POST] /webhooks', () => {
+          // TODO: NIT make test name clearer. eg. ...when
           test('should respond with 500 when server error occurs', async () => {
             const res = await request(server)
               .post('/api/v1/webhooks')
@@ -161,6 +179,15 @@ describe('Routes test suite:', () => {
               .expect(500)
 
             expect(res.body).toEqual({ error: ADD_ISSUES_ERROR.message })
+          })
+
+          test('should respond with 500 when error occurs closing an issue', async () => {
+            const res = await request(server)
+              .post('/api/v1/webhooks')
+              .send(MOCK_CLOSE_ISSUE_WEBHOOK_REQUEST)
+              .expect(500)
+
+            expect(res.body).toEqual({ error: CLOSE_ISSUE_ERROR.message })
           })
         })
       })

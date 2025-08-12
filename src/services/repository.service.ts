@@ -63,7 +63,7 @@ export class RepositoryService {
   }
 
   /**
-   * Adds an issue to the provided repositories issue list.
+   * Adds an issue to the provided repositories issue list when an issue is opened in GitHub.
    *
    *
    * @param issue - The new issue to add to a repository.
@@ -79,6 +79,38 @@ export class RepositoryService {
       await this.repositoryCollection.updateOne(query, update)
     } catch (err) {
       throw new Error('Error adding issue to repository')
+    }
+  }
+
+  /**
+   * Modifies the issue state for a given issue when the issue has been closed.
+   *
+   * @param issue = The id of the issue to be updated.
+   * @param repositoryIdentifiers - The identifiers used to find the repository to be updated.
+   */
+  async closeIssue(
+    issueId: number,
+    repositoryIdentifiers: Pick<Repository, 'gh_id' | 'full_name'>
+  ) {
+    const query = {
+      gh_id: repositoryIdentifiers.gh_id
+    }
+    const update = {
+      $set: { 'issues.$[i].state': 'closed' },
+      $inc: { open_issues_count: -1 }
+    }
+    const options = {
+      arrayFilters: [
+        {
+          'i.gh_id': issueId
+        }
+      ]
+    }
+
+    try {
+      await this.repositoryCollection.updateOne(query, update, options)
+    } catch (error) {
+      throw new Error(`Error closing issue: ${issueId}`)
     }
   }
 }

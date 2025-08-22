@@ -1,6 +1,10 @@
 import dotenv from 'dotenv'
 import { Config } from '@interfaces/config.interface'
 
+// TODO: Add a flag to specify which env file will be used.
+// TODO: Figure out how to use different env variables and env files locally.
+// TODO: Adjust the db connection key.
+
 dotenv.config()
 
 const getResource = (resourceKey: string): string => {

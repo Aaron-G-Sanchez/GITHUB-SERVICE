@@ -15,6 +15,7 @@ import { connect, collections } from '@database/db'
  * @returns Promise<MongoClient> - Mongo client to be closed by the calling script.
  *
  */
+// TODO: Add result of `dryRun` flag.
 export const PopulateDatabase = async (): Promise<MongoClient> => {
   const client = await connect()
 

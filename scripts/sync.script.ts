@@ -1,4 +1,4 @@
-import { SyncDatabase } from '@jobs/sync/sync.service'
+import { SyncDatabase } from '@jobs/sync/sync.job'
 
 SyncDatabase()
   .then((client) => {

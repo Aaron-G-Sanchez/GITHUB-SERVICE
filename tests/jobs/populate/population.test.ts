@@ -12,7 +12,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
 import * as util from '@jobs/shared/util.shared'
-import { PopulateDatabase } from '@jobs/populate/population.service'
+import { PopulateDatabase } from '@jobs/populate/population.job'
 import { Repository } from '@models/Repository'
 import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 

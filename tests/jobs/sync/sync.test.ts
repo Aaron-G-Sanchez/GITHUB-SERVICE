@@ -14,7 +14,7 @@ import * as syncUtils from '@jobs/sync/utils/sync.util'
 import * as util from '@jobs-utils/util.shared'
 import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 import { Repository } from '@models/Repository'
-import { SyncDatabase } from '@jobs/sync/sync.service'
+import { SyncDatabase } from '@jobs/sync/sync.job'
 import { MongoClient } from 'mongodb'
 
 const MOCK_INITIAL_SAVED_REPOS: Repository[] = [

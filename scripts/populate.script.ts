@@ -1,3 +1,4 @@
+import { ParseRuntimeArgs } from '@base/util'
 import { config } from '@config/config.config'
 import { PopulateDatabase } from '@jobs/populate/population.job'
 
@@ -6,6 +7,8 @@ import { PopulateDatabase } from '@jobs/populate/population.job'
 // pass flag to PopulateDatabase.
 
 const args = process.argv
+
+ParseRuntimeArgs(args)
 
 /** EVALUATE ARGS */
 if (args.length <= 2) {

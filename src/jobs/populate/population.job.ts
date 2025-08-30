@@ -16,7 +16,7 @@ import { connect, collections } from '@database/db'
  *
  */
 export const PopulateDatabase = async (): Promise<MongoClient> => {
-  // TODO: Add result of `dryRun` flag.
+  // TODO: Add results of flags.
   const client = await connect()
 
   if (client instanceof Error) {
@@ -32,6 +32,7 @@ export const PopulateDatabase = async (): Promise<MongoClient> => {
 
     const mergedRepos = MergeRepos(repositories, reposWithIssues)
 
+    // TODO: Log overview of data that would be written to DB if doing dry run.
     await collections.repositories?.insertMany(mergedRepos)
   } catch (err) {
     client.close()

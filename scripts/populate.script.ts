@@ -1,5 +1,4 @@
 import { ParseRuntimeArgs } from '@base/util'
-import { config } from '@config/config.config'
 import { PopulateDatabase } from '@jobs/populate/population.job'
 
 // TODO: Add a dry run flag.
@@ -9,14 +8,6 @@ import { PopulateDatabase } from '@jobs/populate/population.job'
 const args = process.argv
 
 ParseRuntimeArgs(args)
-
-/** EVALUATE ARGS */
-if (args.length <= 2) {
-  console.info(
-    `Running in default configuration for environment: ${config.environment}`
-  )
-}
-// Evaluate optional args.
 
 PopulateDatabase()
   .then((client) => {

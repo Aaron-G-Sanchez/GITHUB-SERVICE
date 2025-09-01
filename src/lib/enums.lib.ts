@@ -5,3 +5,9 @@ export enum GithubAction {
   Edited = 'edited',
   Deleted = 'deleted'
 }
+
+export enum TargetEnvironment {
+  Dev = 'dev',
+  Staging = 'staging',
+  Prod = 'prod'
+}

@@ -1,37 +1,32 @@
 import dotenv from 'dotenv'
 import { Config } from '@interfaces/config.interface'
 
-// TODO: Add a flag to specify which env file will be used.
-// TODO: Figure out how to use different env variables and env files locally.
-// TODO: Adjust the db connection key.
+// TODO: Refactor into class.
+export class AppConfig implements Config {
+  port: string
+  environment: string
+  dbConnectionString: string
+  secretKey: string
+  personalAccessToken: string
 
-dotenv.config()
+  constructor() {
+    dotenv.config()
 
-const getResource = (resourceKey: string): string => {
-  const value = process.env[resourceKey]
-
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${resourceKey}`)
+    this.port = this._getResource('PORT')
+    this.environment = this._getResource('ENVIRONMENT')
+    // TODO: Check the environment target.
+    this.dbConnectionString = this._getResource('MONGO_DB_URI')
+    this.secretKey = this._getResource('SECRET_TOKEN')
+    this.personalAccessToken = this._getResource('GH_TOKEN')
   }
 
-  return value
-}
+  private _getResource(resourceKey: string): string {
+    const value = process.env[resourceKey]
 
-/**
- * Object to hold all environment variables.
- *
- * @constant {Object} Config
- * @property {string} port - Exposed port
- * @property {string} environment - Current environment
- * @property {string} dbConnectionString - MongoDB connection URI
- * @property {string} secretKey - Secret key used for API auth.
- * @property {string} personalAccessToken - GitHub PAT for REST API usage.
- *
- */
-export const config: Config = {
-  port: getResource('PORT'),
-  environment: getResource('ENVIRONMENT'),
-  dbConnectionString: getResource('MONGO_DB_URI'),
-  secretKey: getResource('SECRET_TOKEN'),
-  personalAccessToken: getResource('GH_TOKEN')
+    if (!value) {
+      throw new Error(`Missing required environment variable: ${resourceKey}`)
+    }
+
+    return value
+  }
 }

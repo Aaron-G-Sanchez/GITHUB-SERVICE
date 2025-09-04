@@ -1,12 +1,3 @@
-import { config } from '@config/config.config'
-
-/** Request Headers for the GitHub API.  */
-export const REQUEST_HEADERS = {
-  'User-Agent': 'aaron-g-sanchez',
-  'X-GitHub-Api-Version': '2022-11-28',
-  Authorization: `Bearer ${config.personalAccessToken}`
-}
-
 /** URL to fetch all of an authorized users repositories. */
 export const GITHUB_USER_REPOS_URL =
   'https://api.github.com/user/repos?sort=created&affiliation=owner&per_page=100'

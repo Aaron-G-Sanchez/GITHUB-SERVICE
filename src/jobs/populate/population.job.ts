@@ -1,34 +1,47 @@
 import { MongoClient } from 'mongodb'
 
+import { AppConfig } from '@config/config.config'
 import { GITHUB_USER_REPOS_URL } from '@library/constants.lib'
 import {
   FetchIssues,
   FetchUserRepos,
   FilterReposWithIssues,
-  MergeRepos
+  MergeRepos,
+  BuildHeaders
 } from '@jobs-utils/util.shared'
 import { connect, collections } from '@database/db'
 
 /**
  * Function to populate the connected database.
  *
+ * @param [config] - The applications configuration data.
  * @returns Promise<MongoClient> - Mongo client to be closed by the calling script.
  *
  */
-export const PopulateDatabase = async (): Promise<MongoClient> => {
-  // TODO: Add results of flags.
-  const client = await connect()
+// TODO: Add config arg that will be passed to the connect function.
+export const PopulateDatabase = async (
+  config: AppConfig
+): Promise<MongoClient> => {
+  // TODO: Add results of flag: dryRun.
+
+  const client = await connect(config)
 
   if (client instanceof Error) {
     throw client
   }
 
+  const requestHeaders = BuildHeaders(config.personalAccessToken)
+
   try {
-    const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL)
+    const repositories = await FetchUserRepos(GITHUB_USER_REPOS_URL, {
+      headers: requestHeaders
+    })
 
     const filteredRepos = FilterReposWithIssues(repositories)
 
-    const reposWithIssues = await FetchIssues(filteredRepos)
+    const reposWithIssues = await FetchIssues(filteredRepos, {
+      headers: requestHeaders
+    })
 
     const mergedRepos = MergeRepos(repositories, reposWithIssues)
 

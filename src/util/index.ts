@@ -1,5 +1,8 @@
-import { config } from '@config/config.config'
+import dotenv from 'dotenv'
+
 import { TargetEnvironment } from '@library/enums.lib'
+
+dotenv.config()
 
 /** Evaluate the args passed at runtime. */
 export const ParseRuntimeArgs = (args: string[]): boolean => {
@@ -23,7 +26,7 @@ export const ParseRuntimeArgs = (args: string[]): boolean => {
       case TargetEnvironment.Prod:
       default:
         console.info(
-          `Running in default configuration for environment: ${config.environment}`
+          `Running in default configuration for environment: ${process.env.ENVIRONMENT}`
         )
         break
     }

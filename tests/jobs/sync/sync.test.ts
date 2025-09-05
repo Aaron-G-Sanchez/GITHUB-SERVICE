@@ -16,6 +16,9 @@ import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
 import { Repository } from '@models/Repository'
 import { SyncDatabase } from '@jobs/sync/sync.job'
 import { MongoClient } from 'mongodb'
+import { AppConfig } from '@config/config.config'
+
+const TEST_CONFIG = new AppConfig()
 
 const MOCK_INITIAL_SAVED_REPOS: Repository[] = [
   {
@@ -147,7 +150,7 @@ describe('Jobs test suite:', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {
-      testClient = await SyncDatabase()
+      testClient = await SyncDatabase(TEST_CONFIG)
     })
 
     afterAll(async () => {

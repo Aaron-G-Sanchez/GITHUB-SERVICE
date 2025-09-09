@@ -2,8 +2,11 @@ import { describe, test, expect, beforeEach } from 'bun:test'
 import { Express } from 'express'
 import request from 'supertest'
 
+import { AppConfig } from '@config/config.config'
 import { CreateServer } from '@base/server'
 import { RepositoryService } from '@services/repository.service'
+
+const TEST_CONFIG = new AppConfig()
 
 const MOCK_REPOSITORY_SERVICE = {
   // Add mock methods as needed.
@@ -13,7 +16,7 @@ describe('CreateServer test suite:', () => {
   let server: Express
 
   beforeEach(() => {
-    server = CreateServer(MOCK_REPOSITORY_SERVICE)
+    server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
   })
 
   describe('Open routes', () => {

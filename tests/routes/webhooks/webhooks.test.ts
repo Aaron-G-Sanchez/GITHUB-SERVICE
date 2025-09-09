@@ -2,9 +2,12 @@ import { describe, test, expect, beforeAll, mock, beforeEach } from 'bun:test'
 import { Express } from 'express'
 import request from 'supertest'
 
+import { AppConfig } from '@config/config.config'
 import { CreateServer } from '@base/server'
-import { RepositoryService } from '@base/services/repository.service'
 import { GithubAction } from '@library/enums.lib'
+import { RepositoryService } from '@base/services/repository.service'
+
+const TEST_CONFIG = new AppConfig()
 
 const MOCK_ISSUE = {
   id: 1111,
@@ -84,7 +87,7 @@ describe('Routes test suite:', () => {
       let server: Express
 
       beforeEach(() => {
-        server = CreateServer(MOCK_REPOSITORY_SERVICE)
+        server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
       })
 
       describe('[POST] /webhooks', () => {
@@ -113,7 +116,7 @@ describe('Routes test suite:', () => {
         let server: Express
 
         beforeAll(() => {
-          server = CreateServer(MOCK_REPOSITORY_SERVICE)
+          server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
         })
 
         describe('[POST] /webhooks', () => {
@@ -167,7 +170,10 @@ describe('Routes test suite:', () => {
         let server: Express
 
         beforeEach(() => {
-          server = CreateServer(MOCK_REPOSITORY_SERVICE_WITH_ERRORS)
+          server = CreateServer(
+            TEST_CONFIG,
+            MOCK_REPOSITORY_SERVICE_WITH_ERRORS
+          )
         })
 
         describe('[POST] /webhooks', () => {

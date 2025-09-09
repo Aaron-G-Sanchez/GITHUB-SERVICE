@@ -3,8 +3,11 @@ import request from 'supertest'
 import { Express } from 'express'
 import { ObjectId } from 'mongodb'
 
+import { AppConfig } from '@config/config.config'
 import { CreateServer } from '@base/server'
 import { RepositoryService } from '@services/repository.service'
+
+const TEST_CONFIG = new AppConfig()
 
 const MOCK_OBJECT_ID_ONE = new ObjectId().toString()
 const MOCK_OBJECT_ID_TWO = new ObjectId().toString()
@@ -89,7 +92,7 @@ describe('Routes test suite: ', () => {
       let server: Express
 
       beforeEach(() => {
-        server = CreateServer(MOCK_REPOSITORY_SERVICE)
+        server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
       })
 
       describe('[GET] /repos', () => {
@@ -131,7 +134,10 @@ describe('Routes test suite: ', () => {
         let server: Express
 
         beforeEach(() => {
-          server = CreateServer(MOCK_REPOSITORY_SERVICE_WITH_ERRORS)
+          server = CreateServer(
+            TEST_CONFIG,
+            MOCK_REPOSITORY_SERVICE_WITH_ERRORS
+          )
         })
 
         describe('[GET] /repos', () => {
@@ -179,7 +185,7 @@ describe('Routes test suite: ', () => {
 
         describe('[GET] /repos/:id', () => {
           test('should respond with 400 when id param is not a number', async () => {
-            server = CreateServer(MOCK_REPOSITORY_SERVICE)
+            server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
 
             const res = await request(server)
               .get('/api/v1/repos/abc')
@@ -190,7 +196,10 @@ describe('Routes test suite: ', () => {
           })
 
           test('should respond with 404 if no repo with provided id exists', async () => {
-            server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_RESOURCE)
+            server = CreateServer(
+              TEST_CONFIG,
+              MOCK_REPOSITORY_SERVICE_NO_RESOURCE
+            )
 
             const res = await request(server)
               .get('/api/v1/repos/123456')
@@ -205,7 +214,7 @@ describe('Routes test suite: ', () => {
 
         describe('[GET] /search?full_name=', () => {
           test('should respond with 400 when no search param is provided', async () => {
-            server = CreateServer(MOCK_REPOSITORY_SERVICE)
+            server = CreateServer(TEST_CONFIG, MOCK_REPOSITORY_SERVICE)
 
             const res = await request(server)
               .get('/api/v1/repos/search')
@@ -218,7 +227,10 @@ describe('Routes test suite: ', () => {
           })
 
           test('should respond with 404 when no repository matches search param provided', async () => {
-            server = CreateServer(MOCK_REPOSITORY_SERVICE_NO_RESOURCE)
+            server = CreateServer(
+              TEST_CONFIG,
+              MOCK_REPOSITORY_SERVICE_NO_RESOURCE
+            )
 
             const res = await request(server)
               .get('/api/v1/repos/search?full_name=user%2FFake-Repo')

@@ -2,7 +2,7 @@ import { mock } from 'bun:test'
 
 class MockAppConfig {
   port = '4200'
-  environment = 'TEST'
+  environment = 'test'
   dbConnectionString = 'http://test.com'
   secretKey = 'test-secret'
   personalAccessToken = 'test-secret'

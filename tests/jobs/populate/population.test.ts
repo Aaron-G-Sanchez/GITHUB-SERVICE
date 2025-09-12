@@ -14,7 +14,7 @@ import * as db from '@database/db'
 import * as util from '@jobs/shared/util.shared'
 import { PopulateDatabase } from '@jobs/populate/population.job'
 import { Repository } from '@models/Repository'
-import { MOCK_DB_CONNECTION } from '@test_utils/db.mock'
+import { MOCK_DB_CONNECTION } from '@test-utils/db.mock'
 import { AppConfig } from '@config/config.config'
 
 const TEST_CONFIG = new AppConfig()

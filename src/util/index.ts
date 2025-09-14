@@ -1,11 +1,8 @@
-import dotenv from 'dotenv'
-
 import { TargetEnvironment } from '@library/enums.lib'
 
-dotenv.config()
-
 /** Evaluate the args passed at runtime. */
-export const ParseRuntimeArgs = (args: string[]): boolean => {
+// TODO: Create an type for the return of ParseRuntimeArgs.
+export const ParseRuntimeArgs = (args: string[]): string | undefined => {
   let targetEnv: string | undefined
   let dryRun: boolean = true
 
@@ -15,27 +12,18 @@ export const ParseRuntimeArgs = (args: string[]): boolean => {
     if (arg === '-targetEnv' || arg === '--targetEnv') {
       targetEnv = args[i + 1]
     } else if (arg === '-dryRun' || '--dryRun') {
+      // TODO: Validate dryRun arg.
       dryRun = false
     }
   }
 
-  if (targetEnv && validateTargetEnv(targetEnv)) {
-    switch (targetEnv) {
-      case TargetEnvironment.Staging:
-        break
-      case TargetEnvironment.Prod:
-      default:
-        console.info(
-          `Running in default configuration for environment: ${process.env.ENVIRONMENT}`
-        )
-        break
-    }
+  if (targetEnv && !isValidTargetEnv(targetEnv)) {
+    console.error(`Invalid target environment: ${targetEnv}`)
   }
-  console.log('env: ', targetEnv)
-  console.log('dryRun: ', dryRun)
-  return dryRun
+
+  return targetEnv
 }
 
-const validateTargetEnv = (target: string) => {
+const isValidTargetEnv = (target: string) => {
   return Object.values(TargetEnvironment).includes(target as TargetEnvironment)
 }

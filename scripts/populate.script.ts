@@ -2,7 +2,7 @@ import { AppConfig } from '@config/config.config'
 import { ParseRuntimeArgs } from '@base/util/parseArgs'
 import { PopulateDatabase } from '@jobs/populate/population.job'
 
-// TODO: Extract to a setup command.
+// TODO: Extract to a setup function.
 const args = process.argv
 const override = ParseRuntimeArgs(args)
 const config = new AppConfig(override)

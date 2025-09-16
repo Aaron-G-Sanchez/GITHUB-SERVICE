@@ -9,7 +9,7 @@ export class AppConfig implements Config {
   secretKey: string
   personalAccessToken: string
 
-  constructor(override?: Override) {
+  constructor(overrides?: Override) {
     dotenv.config()
 
     this.port = this._getResource('PORT')
@@ -19,8 +19,8 @@ export class AppConfig implements Config {
     this.dbConnectionString = this._getDBConnectionString(this.environment)
 
     // TODO: Parse the override object for dry run operation.
-    if (override && override.targetEnv) {
-      this.dbConnectionString = this._getDBConnectionString(override.targetEnv)
+    if (overrides && overrides.targetEnv) {
+      this.dbConnectionString = this._getDBConnectionString(overrides.targetEnv)
     }
   }
 

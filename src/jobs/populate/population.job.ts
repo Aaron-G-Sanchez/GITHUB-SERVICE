@@ -18,12 +18,9 @@ import { connect, collections } from '@database/db'
  * @returns Promise<MongoClient> - Mongo client to be closed by the calling script.
  *
  */
-// TODO: Add config arg that will be passed to the connect function.
 export const PopulateDatabase = async (
   config: AppConfig
 ): Promise<MongoClient> => {
-  // TODO: Add results of flag: dryRun.
-
   const client = await connect(config)
 
   if (client instanceof Error) {
@@ -45,7 +42,7 @@ export const PopulateDatabase = async (
 
     const mergedRepos = MergeRepos(repositories, reposWithIssues)
 
-    // TODO: Log overview of data that would be written to DB if doing dry run.
+    // TODO: Add dry run operation.
     await collections.repositories?.insertMany(mergedRepos)
   } catch (err) {
     client.close()

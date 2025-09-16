@@ -12,9 +12,12 @@ import { MongoMemoryServer } from 'mongodb-memory-server'
 
 import * as db from '@database/db'
 import * as util from '@jobs/shared/util.shared'
-import { PopulateDatabase } from '@jobs/populate/population.service'
+import { PopulateDatabase } from '@jobs/populate/population.job'
 import { Repository } from '@models/Repository'
-import { MOCK_DB_CONNECTION } from '../../utils/db.mock'
+import { MOCK_DB_CONNECTION } from '@test-utils/db.mock'
+import { AppConfig } from '@config/config.config'
+
+const TEST_CONFIG = new AppConfig()
 
 const MOCK_FETCH_USER_REPOS_RESPONSE: Repository[] = [
   {
@@ -202,7 +205,7 @@ describe('Jobs test suite:', () => {
     let testClient: MongoClient
 
     beforeAll(async () => {
-      testClient = await PopulateDatabase()
+      testClient = await PopulateDatabase(TEST_CONFIG)
     })
 
     afterAll(async () => {

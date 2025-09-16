@@ -1,6 +1,13 @@
-import { SyncDatabase } from '@jobs/sync/sync.service'
+import { AppConfig } from '@config/config.config'
+import { ParseRuntimeArgs } from '@base/util/parseArgs'
+import { SyncDatabase } from '@jobs/sync/sync.job'
 
-SyncDatabase()
+// TODO: Extract to a set up function.
+const args = process.argv
+const override = ParseRuntimeArgs(args)
+const config = new AppConfig(override)
+
+SyncDatabase(config)
   .then((client) => {
     console.log('Database synchronization complete ')
     client.close()

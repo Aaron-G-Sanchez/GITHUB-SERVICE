@@ -1,20 +1,20 @@
+import { AppConfig } from '@config/config.config'
 import { CreateServer } from '@base/server'
 import { connect, collections } from '@database/db'
-import { config } from '@config/config.config'
 import { RepositoryService } from '@services/repository.service'
 
-const PORT = config.port
+const config = new AppConfig()
 
-connect()
+connect(config)
   .then(() => {
     if (!collections) throw new Error('Error connecting to DB.')
 
     const repositoriesService = new RepositoryService(collections.repositories!)
 
-    const server = CreateServer(repositoriesService)
+    const server = CreateServer(config, repositoriesService)
 
-    server.listen(PORT, () => {
-      console.log(`Server listening on port: ${PORT}`)
+    server.listen(config.port, () => {
+      console.log(`Server listening on port: ${config.port}`)
     })
   })
   .catch((err: Error) => {

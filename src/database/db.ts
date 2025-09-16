@@ -1,12 +1,20 @@
 import { Collection, MongoClient, ServerApiVersion } from 'mongodb'
 
 import { Repository } from '@models/Repository'
-import { config } from '@config/config.config'
+import { AppConfig } from '@config/config.config'
 
 export const collections: { repositories?: Collection<Repository> } = {}
 
-// TODO: Add environment based DB connection.
-export const connect = async (): Promise<MongoClient | Error> => {
+/**
+ * Connects to a MongoDB database using the provided configuration options.
+ *
+ * @param [config] - The applications configuration
+ *
+ */
+// TODO: Capitalize function name.
+export const connect = async (
+  config: AppConfig
+): Promise<MongoClient | Error> => {
   const MONGO_DB_URI = config.dbConnectionString
 
   if (!MONGO_DB_URI) return new Error('No MONGO_DB_URI found.')

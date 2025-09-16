@@ -2,12 +2,15 @@ import express, { Express, Request, Response } from 'express'
 import morgan from 'morgan'
 
 import { ValidateToken } from '@middleware/auth/verifyToken'
-import { config } from '@config/config.config'
+import { AppConfig } from '@config/config.config'
 import { RepositoryService } from './services/repository.service'
 import { CreateRepositoryRouter } from '@routes/repositories/repositories.router'
 import { CreateWebhookRouter } from '@routes/webhooks/webhooks.router'
 
-export const CreateServer = (repositoryService: RepositoryService) => {
+export const CreateServer = (
+  config: AppConfig,
+  repositoryService: RepositoryService
+) => {
   const repositoriesRouter = CreateRepositoryRouter(repositoryService)
   const webhookRouter = CreateWebhookRouter(repositoryService)
 
@@ -37,7 +40,7 @@ export const CreateServer = (repositoryService: RepositoryService) => {
   server.use('/api/v1/webhooks', webhookRouter)
 
   //** PROTECTED ROUTES. */
-  server.use('/api/v1/repos', ValidateToken, repositoriesRouter)
+  server.use('/api/v1/repos', ValidateToken(config), repositoriesRouter)
 
   //** FALLBACK ROUTE */
   server.use((req: Request, res: Response) => {

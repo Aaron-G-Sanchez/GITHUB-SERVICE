@@ -1,5 +1,4 @@
 import {
-  REQUEST_HEADERS,
   NEXT_PATTERN_REG,
   GITHUB_REPO_ISSUES_URL
 } from '@library/constants.lib'
@@ -14,7 +13,7 @@ import { Repository } from '@models/Repository'
  */
 export const FetchUserRepos = async (
   endpoint: string,
-  options?: RequestInit
+  options: RequestInit
 ): Promise<Repository[]> => {
   let pagesRemaining = true
   let repositoryData: Repository[] = []
@@ -47,7 +46,7 @@ export const FetchUserRepos = async (
  */
 export const FetchIssues = async (
   repos: Repository[],
-  options?: RequestInit
+  options: RequestInit
 ): Promise<Repository[]> => {
   // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
@@ -99,6 +98,18 @@ export const MergeRepos = (
   return result
 }
 
+/**
+ * Util to build the request headers.
+ * @param accessToken - string from the config object.
+ */
+export const BuildHeaders = (accessToken: string) => {
+  return {
+    'User-Agent': 'aaron-g-sanchez',
+    'X-GitHub-Api-Version': '2022-11-28',
+    Authorization: `Bearer ${accessToken}`
+  }
+}
+
 // ****** TODO: REMOVE EXPORTS FOR THESE HELPER FUNCTIONS ******
 
 /**
@@ -110,13 +121,11 @@ export const MergeRepos = (
  */
 export const fetchUtil = async (
   endpoint: string,
-  options?: RequestInit
+  options: RequestInit
 ): Promise<Response> => {
-  // TODO: Add check for the `token` constant here.
   const response = await fetch(endpoint, {
     headers: {
-      ...REQUEST_HEADERS,
-      ...options?.headers
+      ...options.headers
     }
   })
   return response

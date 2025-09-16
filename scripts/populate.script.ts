@@ -1,14 +1,11 @@
 import { AppConfig } from '@config/config.config'
-import { ParseRuntimeArgs } from '@base/util'
+import { ParseRuntimeArgs } from '@base/util/parseArgs'
 import { PopulateDatabase } from '@jobs/populate/population.job'
 
-// TODO: Parse dry run and db env target arguments.
+// TODO: Extract to a setup command.
 const args = process.argv
-
-// TODO: Pass values returned from function into Config class.
-ParseRuntimeArgs(args)
-
-const config = new AppConfig()
+const override = ParseRuntimeArgs(args)
+const config = new AppConfig(override)
 
 PopulateDatabase(config)
   .then((client) => {

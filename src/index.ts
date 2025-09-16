@@ -3,10 +3,6 @@ import { CreateServer } from '@base/server'
 import { connect, collections } from '@database/db'
 import { RepositoryService } from '@services/repository.service'
 
-// TODO: Update env environment
-// 1: Check for a flag override
-// 2: no override; continue with the environment variable
-// 3: override; use override flag
 const config = new AppConfig()
 
 connect(config)

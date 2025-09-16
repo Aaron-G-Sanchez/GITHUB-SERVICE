@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import { Config } from '@interfaces/config.interface'
+import { Override } from '@interfaces/override.interface'
 
-// TODO: Refactor into class.
 export class AppConfig implements Config {
   port: string
   environment: string
@@ -9,15 +9,19 @@ export class AppConfig implements Config {
   secretKey: string
   personalAccessToken: string
 
-  constructor() {
+  constructor(override?: Override) {
     dotenv.config()
 
     this.port = this._getResource('PORT')
     this.environment = this._getResource('ENVIRONMENT')
-    // TODO: Check the environment target.
-    this.dbConnectionString = this._getResource('MONGO_DB_URI')
     this.secretKey = this._getResource('SECRET_TOKEN')
     this.personalAccessToken = this._getResource('GH_TOKEN')
+    this.dbConnectionString = this._getDBConnectionString(this.environment)
+
+    // TODO: Parse the override object for dry run operation.
+    if (override && override.targetEnv) {
+      this.dbConnectionString = this._getDBConnectionString(override.targetEnv)
+    }
   }
 
   private _getResource(resourceKey: string): string {
@@ -28,5 +32,16 @@ export class AppConfig implements Config {
     }
 
     return value
+  }
+
+  private _getDBConnectionString(env: string): string {
+    switch (env) {
+      case 'staging':
+        return this._getResource('MONGO_DB_URI_STAGING')
+      case 'prod':
+        return this._getResource('MONGO_DB_CONNECTION_PROD')
+      default:
+        return this._getResource('MONGO_DB_URI')
+    }
   }
 }

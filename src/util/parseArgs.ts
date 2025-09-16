@@ -1,27 +1,24 @@
 import { TargetEnvironment } from '@library/enums.lib'
+import { Override } from '@interfaces/override.interface'
 
 /** Evaluate the args passed at runtime. */
-// TODO: Create an type for the return of ParseRuntimeArgs.
-export const ParseRuntimeArgs = (args: string[]): string | undefined => {
+export const ParseRuntimeArgs = (args: string[]): Override => {
   let targetEnv: string | undefined
-  let dryRun: boolean = true
 
   for (let i = 2; i < args.length; i++) {
     const arg = args[i]
 
+    // TODO: Add operation for dry run override.
     if (arg === '-targetEnv' || arg === '--targetEnv') {
       targetEnv = args[i + 1]
-    } else if (arg === '-dryRun' || '--dryRun') {
-      // TODO: Validate dryRun arg.
-      dryRun = false
     }
   }
 
   if (targetEnv && !isValidTargetEnv(targetEnv)) {
-    console.error(`Invalid target environment: ${targetEnv}`)
+    throw new Error(`Invalid target environment: ${targetEnv}`)
   }
 
-  return targetEnv
+  return { targetEnv }
 }
 
 const isValidTargetEnv = (target: string) => {

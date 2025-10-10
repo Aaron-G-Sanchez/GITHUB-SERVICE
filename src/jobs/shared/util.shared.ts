@@ -44,21 +44,39 @@ export const FetchUserRepos = async (
  * @param repos List of repositories that have active issues.
  *
  */
+// TODO: Update the fetching mechanism to fetch when multiple pages of issues
+// exist for a repo.
 export const FetchIssues = async (
   repos: Repository[],
   options: RequestInit
 ): Promise<Repository[]> => {
   // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
-    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
+    let endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
+    let pagesRemaining = true
+    let issuesData: Issue[] = []
 
-    const repoIssues = await fetchUtil(endpoint, options)
+    while (pagesRemaining) {
+      const res = await fetchUtil(endpoint, options)
 
-    const parsedData = await parseIssues(repoIssues)
+      const parsedData = await parseIssues(res)
+
+      issuesData = [...issuesData, ...parsedData]
+
+      const linkHeaders = res.headers.get('link')
+
+      // TODO: Look into replacing the includes with a regex validation.
+      pagesRemaining =
+        linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
+
+      if (pagesRemaining) {
+        endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
+      }
+    }
 
     return {
       ...repo,
-      issues: parsedData
+      issues: issuesData
     }
   })
 
@@ -178,3 +196,9 @@ export const parseIssues = async (responseData: Response): Promise<Issue[]> => {
 
   return issues
 }
+
+/**
+ * Util to fetch next page from a paginated API response.
+ *
+ */
+const fetchNextPage = () => {}

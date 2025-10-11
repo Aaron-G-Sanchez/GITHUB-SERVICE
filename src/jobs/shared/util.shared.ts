@@ -15,26 +15,27 @@ export const FetchUserRepos = async (
   endpoint: string,
   options: RequestInit
 ): Promise<Repository[]> => {
-  let pagesRemaining = true
-  let repositoryData: Repository[] = []
+  // let pagesRemaining = true
+  // let repositoryData: Repository[] = []
 
-  while (pagesRemaining) {
-    const res = await fetchUtil(endpoint, options)
+  // while (pagesRemaining) {
+  //   const res = await fetchUtil(endpoint, options)
 
-    const parsedData = await parseResponseData(res)
+  //   const parsedData = await parseResponseData(res)
 
-    repositoryData = [...repositoryData, ...parsedData]
+  //   repositoryData = [...repositoryData, ...parsedData]
 
-    const linkHeaders = res.headers.get('link')
+  //   const linkHeaders = res.headers.get('link')
 
-    pagesRemaining =
-      linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
+  //   pagesRemaining =
+  //     linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
 
-    if (pagesRemaining) {
-      endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
-    }
-  }
+  //   if (pagesRemaining) {
+  //     endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
+  //   }
+  // }
 
+  const repositoryData = await fetchAllPages(endpoint, options, 'repository')
   return repositoryData
 }
 
@@ -53,26 +54,27 @@ export const FetchIssues = async (
   // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
     let endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
-    let pagesRemaining = true
-    let issuesData: Issue[] = []
+    // let pagesRemaining = true
+    // let issuesData: Issue[] = []
 
-    while (pagesRemaining) {
-      const res = await fetchUtil(endpoint, options)
+    // while (pagesRemaining) {
+    //   const res = await fetchUtil(endpoint, options)
 
-      const parsedData = await parseIssues(res)
+    //   const parsedData = await parseIssues(res)
 
-      issuesData = [...issuesData, ...parsedData]
+    //   issuesData = [...issuesData, ...parsedData]
 
-      const linkHeaders = res.headers.get('link')
+    //   const linkHeaders = res.headers.get('link')
 
-      // TODO: Look into replacing the includes with a regex validation.
-      pagesRemaining =
-        linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
+    //   // TODO: Look into replacing the includes with a regex validation.
+    //   pagesRemaining =
+    //     linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
 
-      if (pagesRemaining) {
-        endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
-      }
-    }
+    //   if (pagesRemaining) {
+    //     endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
+    //   }
+    // }
+    const issuesData = await fetchAllPages(endpoint, options, 'issue')
 
     return {
       ...repo,
@@ -197,8 +199,53 @@ export const parseIssues = async (responseData: Response): Promise<Issue[]> => {
   return issues
 }
 
-/**
- * Util to fetch next page from a paginated API response.
- *
- */
-const fetchNextPage = () => {}
+function fetchAllPages(
+  endpoint: string,
+  options: RequestInit,
+  resource: 'repository'
+): Promise<Repository[]>
+
+function fetchAllPages(
+  endpoint: string,
+  options: RequestInit,
+  resource: 'issue'
+): Promise<Issue[]>
+
+async function fetchAllPages(
+  endpoint: string,
+  options: RequestInit,
+  resource: 'repository' | 'issue'
+): Promise<(Repository | Issue)[]> {
+  let pagesRemaining = true
+  let data: (Repository | Issue)[] = []
+
+  while (pagesRemaining) {
+    const res = await fetchUtil(endpoint, options)
+
+    switch (resource) {
+      case 'repository': {
+        const parsedData = await parseResponseData(res)
+        data = [...data, ...parsedData]
+        break
+      }
+      case 'issue': {
+        const parsedData = await parseIssues(res)
+        data = [...data, ...parsedData]
+        break
+      }
+      default:
+        throw new Error(`Unknown resource type: ${resource}`)
+    }
+
+    const linkHeaders = res.headers.get('link')
+
+    pagesRemaining =
+      linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
+
+    if (pagesRemaining) {
+      endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
+    }
+  }
+
+  return data
+}

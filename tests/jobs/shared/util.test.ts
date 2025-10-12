@@ -124,7 +124,8 @@ const TEST_ISSUES_RESPONSE_REPO_TWO = {
         }
       }
     ]),
-  status: 200
+  status: 200,
+  headers: new Headers()
 } as Response
 
 const TEST_ISSUES_RESPONSE_REPO_THREE = {
@@ -146,7 +147,8 @@ const TEST_ISSUES_RESPONSE_REPO_THREE = {
         }
       }
     ]),
-  status: 200
+  status: 200,
+  headers: new Headers()
 } as Response
 
 const PARSED_REPO_ONE: Repository = {

@@ -20,7 +20,7 @@ const TEST_HEADERS: Record<string, string> = {
   Authorization: 'Bearer test-token'
 }
 
-const TEST_RESPONSE_DATA = {
+const MOCK_FETCH_REPOSITORIES_RESPONSE_DATA = {
   ok: true,
   json: () =>
     Promise.resolve([
@@ -91,7 +91,55 @@ const TEST_RESPONSE_DATA = {
   })
 } as Response
 
-const TEST_ISSUES_RESPONSE_REPO_TWO = {
+const MOCK_FETCH_REPOSITORY_PAGINATED_RESPONSE_ONE = {
+  ok: true,
+  json: () =>
+    Promise.resolve([
+      {
+        id: 1111,
+        node_id: 'randomHash',
+        name: 'Pagination-Test-Repo-One',
+        full_name: 'user/Pagination-Test-Repo-One',
+        html_url: 'http://example.com/user/Pagination-Test-Repo-One',
+        fork: false,
+        url: 'http://example.com/user/Pagination-Test-Repo-One',
+        open_issues_count: 2,
+        has_issues: true,
+        has_pages: true,
+        created_at: '2025-10-13T15:00:20Z',
+        watchers: 2
+      }
+    ]),
+  status: 200,
+  headers: new Headers({
+    link: '<http://api.example.com/user/repos/page=2>; rel="next",'
+  })
+} as Response
+
+const MOCK_FETCH_REPOSITORY_PAGINATED_RESPONSE_TWO = {
+  ok: true,
+  json: () =>
+    Promise.resolve([
+      {
+        id: 2222,
+        node_id: 'anotherRadomHash',
+        name: 'Pagination-Test-Repo-Two',
+        full_name: 'user/Pagination-Test-Repo-Two',
+        html_url: 'http://example.com/user/Pagination-Test-Repo-Two',
+        fork: false,
+        url: 'http://example.com/user/Pagination-Test-Repo-Two',
+        open_issues_count: 0,
+        has_issues: false,
+        has_pages: false,
+        created_at: '2025-10-13T15:10:15Z',
+        watchers: 1
+      }
+    ]),
+  status: 200,
+  headers: new Headers()
+} as Response
+
+const MOCK_FETCH_ISSUES_RESPONSE_ONE = {
   ok: true,
   json: () =>
     Promise.resolve([
@@ -128,7 +176,7 @@ const TEST_ISSUES_RESPONSE_REPO_TWO = {
   headers: new Headers()
 } as Response
 
-const TEST_ISSUES_RESPONSE_REPO_THREE = {
+const MOCK_FETCH_ISSUES_RESPONSE_TWO = {
   ok: true,
   json: () =>
     Promise.resolve([
@@ -185,6 +233,30 @@ const PARSED_REPO_THREE: Repository = {
   created_at: '2025-06-27T23:05:15Z'
 }
 
+const PAGINATED_PARSED_REPO_ONE: Repository = {
+  gh_id: 1111,
+  name: 'Pagination-Test-Repo-One',
+  full_name: 'user/Pagination-Test-Repo-One',
+  html_url: 'http://example.com/user/Pagination-Test-Repo-One',
+  fork: false,
+  url: 'http://example.com/user/Pagination-Test-Repo-One',
+  open_issues_count: 2,
+  has_issues: true,
+  created_at: '2025-10-13T15:00:20Z'
+}
+
+const PAGINATED_PARSED_REPO_TWO: Repository = {
+  gh_id: 2222,
+  name: 'Pagination-Test-Repo-Two',
+  full_name: 'user/Pagination-Test-Repo-Two',
+  html_url: 'http://example.com/user/Pagination-Test-Repo-Two',
+  fork: false,
+  url: 'http://example.com/user/Pagination-Test-Repo-Two',
+  open_issues_count: 0,
+  has_issues: false,
+  created_at: '2025-10-13T15:10:15Z'
+}
+
 const PARSED_ISSUE_ONE: Issue = {
   gh_id: 1111,
   number: 1,
@@ -222,13 +294,23 @@ const EXPECTED_REPO_THREE = {
   issues: REPO_THREE_ISSUES
 }
 
-const MOCK_FETCH_REPOSITORIES = mock(() => Promise.resolve(TEST_RESPONSE_DATA))
+const MOCK_FETCH_REPOSITORIES = mock(() =>
+  Promise.resolve(MOCK_FETCH_REPOSITORIES_RESPONSE_DATA)
+)
+
+const MOCK_FETCH_REPOSITORIES_PAGINATED = mock((url: string) => {
+  if (url.includes('page=2')) {
+    return Promise.resolve(MOCK_FETCH_REPOSITORY_PAGINATED_RESPONSE_TWO)
+  } else {
+    return Promise.resolve(MOCK_FETCH_REPOSITORY_PAGINATED_RESPONSE_ONE)
+  }
+})
 
 const MOCK_FETCH_ISSUES = mock((url: string) => {
   if (url.includes('Second-Repo')) {
-    return Promise.resolve(TEST_ISSUES_RESPONSE_REPO_TWO)
+    return Promise.resolve(MOCK_FETCH_ISSUES_RESPONSE_ONE)
   } else {
-    return Promise.resolve(TEST_ISSUES_RESPONSE_REPO_THREE)
+    return Promise.resolve(MOCK_FETCH_ISSUES_RESPONSE_TWO)
   }
 })
 
@@ -260,13 +342,17 @@ describe('Jobs test suite:', () => {
         const result = await utils.fetchUtil(TEST_ENDPOINT, {
           headers: TEST_HEADERS
         })
-        expect(result).toMatchObject(TEST_RESPONSE_DATA as Response)
+        expect(result).toMatchObject(
+          MOCK_FETCH_REPOSITORIES_RESPONSE_DATA as Response
+        )
       })
     })
 
     describe('parseResponseData', () => {
       test('should parse necessary data from API Response', async () => {
-        const parsedRepos = await utils.parseResponseData(TEST_RESPONSE_DATA)
+        const parsedRepos = await utils.parseResponseData(
+          MOCK_FETCH_REPOSITORIES_RESPONSE_DATA
+        )
 
         expect(parsedRepos).toEqual([
           PARSED_REPO_ONE,
@@ -299,6 +385,24 @@ describe('Jobs test suite:', () => {
         test('should call the [parseResponseData] function', async () => {
           await utils.FetchUserRepos(TEST_ENDPOINT, { headers: TEST_HEADERS })
           expect(PARSE_RESPONSE_DATA_SPY).toBeCalledTimes(1)
+        })
+      })
+
+      describe('when a second page of repositories is returned', () => {
+        beforeEach(() => {
+          global.fetch =
+            MOCK_FETCH_REPOSITORIES_PAGINATED as unknown as typeof fetch
+        })
+
+        test('Should fetch all pages of repositories', async () => {
+          const response = await utils.FetchUserRepos(TEST_ENDPOINT, {
+            headers: TEST_HEADERS
+          })
+
+          expect(response).toEqual([
+            PAGINATED_PARSED_REPO_ONE,
+            PAGINATED_PARSED_REPO_TWO
+          ])
         })
       })
     })

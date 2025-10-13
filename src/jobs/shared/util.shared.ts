@@ -15,26 +15,6 @@ export const FetchUserRepos = async (
   endpoint: string,
   options: RequestInit
 ): Promise<Repository[]> => {
-  // let pagesRemaining = true
-  // let repositoryData: Repository[] = []
-
-  // while (pagesRemaining) {
-  //   const res = await fetchUtil(endpoint, options)
-
-  //   const parsedData = await parseResponseData(res)
-
-  //   repositoryData = [...repositoryData, ...parsedData]
-
-  //   const linkHeaders = res.headers.get('link')
-
-  //   pagesRemaining =
-  //     linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
-
-  //   if (pagesRemaining) {
-  //     endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
-  //   }
-  // }
-
   const repositoryData = await fetchAllPages(endpoint, options, 'repository')
   return repositoryData
 }
@@ -45,35 +25,13 @@ export const FetchUserRepos = async (
  * @param repos List of repositories that have active issues.
  *
  */
-// TODO: Update the fetching mechanism to fetch when multiple pages of issues
-// exist for a repo.
 export const FetchIssues = async (
   repos: Repository[],
   options: RequestInit
 ): Promise<Repository[]> => {
-  // TODO: Look into just returning the issues.
   const enrichedRepos = repos.map(async (repo) => {
-    let endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
-    // let pagesRemaining = true
-    // let issuesData: Issue[] = []
+    const endpoint = `${GITHUB_REPO_ISSUES_URL}${repo.name}/issues?state=all&per_page=100&direction=asc`
 
-    // while (pagesRemaining) {
-    //   const res = await fetchUtil(endpoint, options)
-
-    //   const parsedData = await parseIssues(res)
-
-    //   issuesData = [...issuesData, ...parsedData]
-
-    //   const linkHeaders = res.headers.get('link')
-
-    //   // TODO: Look into replacing the includes with a regex validation.
-    //   pagesRemaining =
-    //     linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
-
-    //   if (pagesRemaining) {
-    //     endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
-    //   }
-    // }
     const issuesData = await fetchAllPages(endpoint, options, 'issue')
 
     return {
@@ -157,6 +115,8 @@ export const fetchUtil = async (
  * @param [responseData] Fetch API Response.
  * @returns Array of Repositories.
  */
+// TODO: Rename for clarity.
+// ie. parseRepositories
 export const parseResponseData = async (
   responseData: Response
 ): Promise<Repository[]> => {
@@ -241,7 +201,6 @@ async function fetchAllPages(
 
     pagesRemaining =
       linkHeaders !== null && linkHeaders.includes(`rel=\"next\"`)
-
     if (pagesRemaining) {
       endpoint = linkHeaders!.match(NEXT_PATTERN_REG)![0]
     }

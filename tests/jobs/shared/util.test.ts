@@ -405,6 +405,9 @@ describe('Jobs test suite:', () => {
 
     afterEach(() => {
       MOCK_FETCH_REPOSITORIES.mockClear()
+      MOCK_FETCH_REPOSITORIES_PAGINATED.mockClear()
+      MOCK_FETCH_ISSUES.mockClear()
+      MOCK_FETCH_ISSUES_PAGINATED.mockClear()
       FETCH_UTIL_SPY.mockClear()
       PARSE_RESPONSE_DATA_SPY.mockClear()
       PARSE_ISSUES_SPY.mockClear()
@@ -482,6 +485,14 @@ describe('Jobs test suite:', () => {
             PARSED_PAGINATED_REPO_TWO
           ])
         })
+
+        test('Should fetch all pages of repositories', async () => {
+          await utils.FetchUserRepos(TEST_ENDPOINT, {
+            headers: TEST_HEADERS
+          })
+
+          expect(MOCK_FETCH_REPOSITORIES_PAGINATED).toHaveBeenCalledTimes(2)
+        })
       })
     })
 
@@ -536,12 +547,20 @@ describe('Jobs test suite:', () => {
           global.fetch = MOCK_FETCH_ISSUES_PAGINATED as unknown as typeof fetch
         })
 
-        test('should return a list of repositories and fetch all pages of issues', async () => {
+        test('should return a list of repositories', async () => {
           const res = await utils.FetchIssues(repoList, {
             headers: TEST_HEADERS
           })
 
           expect(res).toEqual([EXPECTED_PAGINATED_ISSUES_TEST_REPO_ONE])
+        })
+
+        test('should fetch every page of issues', async () => {
+          await utils.FetchIssues(repoList, {
+            headers: TEST_HEADERS
+          })
+
+          expect(MOCK_FETCH_ISSUES_PAGINATED).toHaveBeenCalledTimes(2)
         })
       })
     })
